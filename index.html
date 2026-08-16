@@ -1322,7 +1322,7 @@
                     </div>
                 </div>
 
-                <!-- ================= TAB LPJ (BARU) ================= -->
+                <!-- ================= TAB LPJ ================= -->
                 <div id="tab-lpj" class="konten-tab" style="display: none;">
                     <div class="card-report p-4 mb-4 no-print">
                         <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
@@ -1553,7 +1553,7 @@
                                             <div class="col-md-4">
                                                 <label class="form-label small fw-bold">Password Admin Utama</label>
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control border-end-0" id="cfg-admin-password" autocomplete="new-password" required>
+                                                    <input type="password" class="form-control border-end-0" id="cfg-admin-password" autocomplete="new-password" placeholder="Ketik jika ingin ubah">
                                                     <span class="input-group-text input-group-text-toggle border-start-0" onclick="togglePassword('cfg-admin-password', 'toggle-icon-cfg-pass')">
                                                         <i class="fas fa-eye text-muted" id="toggle-icon-cfg-pass"></i>
                                                     </span>
@@ -1561,7 +1561,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label small fw-bold">Kode PIN Akses Menu</label>
-                                                <input type="text" class="form-control" id="cfg-kode-akses" placeholder="Default: 1234" autocomplete="off" required>
+                                                <input type="password" class="form-control" id="cfg-kode-akses" placeholder="Ketik PIN Baru..." autocomplete="off">
                                             </div>
                                         </div>
                                     </div>
@@ -1725,12 +1725,8 @@
                     </div>
                     
                     <div class="d-flex justify-content-end gap-2 mt-4 pt-2">
-                        <button type="button" class="btn google-btn-text" data-bs-dismiss="modal">
-                            Batal
-                        </button>
-                        <button type="button" class="btn google-btn-filled" onclick="verifikasiPinAkses()">
-                            Selanjutnya
-                        </button>
+                        <button type="button" class="btn google-btn-text" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn google-btn-filled" onclick="verifikasiPinAkses()">Selanjutnya</button>
                     </div>
                     
                 </div>
@@ -1778,8 +1774,7 @@
                     <form onsubmit="simpanConfigPADesDinamis(event)">
                         <p class="small text-muted mb-3">Atur nama keterangan dan persentase alokasi laba bersih. Total keseluruhan persentase harus tepat berjumlah 100%.</p>
                         
-                        <div id="container-dynamic-pades" class="vstack gap-2 mb-3">
-                        </div>
+                        <div id="container-dynamic-pades" class="vstack gap-2 mb-3"></div>
 
                         <button type="button" class="btn btn-sm btn-outline-success fw-bold rounded-pill mb-4 shadow-sm" onclick="tambahBarisPades()">
                             <i class="fas fa-plus me-1"></i> Tambah Alokasi Baru
@@ -1862,11 +1857,12 @@
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Password Login Unit</label>
                             <div class="input-group">
-                                <input type="password" class="form-control border-end-0" id="edit-password" placeholder="Ubah password baru" autocomplete="new-password" required>
+                                <input type="password" class="form-control border-end-0" id="edit-password" placeholder="Isi untuk ubah password" autocomplete="new-password">
                                 <span class="input-group-text input-group-text-toggle border-start-0" onclick="togglePassword('edit-password', 'toggle-icon-edit-pass')">
                                     <i class="fas fa-eye text-muted" id="toggle-icon-edit-pass"></i>
                                 </span>
                             </div>
+                            <small class="text-muted" style="font-size:0.7rem;">*Kosongkan jika tidak ingin mengganti password</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Perizinan Input Laporan</label>
@@ -1923,7 +1919,7 @@
                                 <option value="16">16 Tahun (Bangunan Permanen Sederhana)</option>
                                 <option value="20">20 Tahun (Bangunan Permanen)</option>
                             </select>
-                            <small class="text-muted" style="font-size: 0.7rem;">*Penyusutan pertahun akan dihitung otomatis sesuai aturan akuntansi garis lurus.</small>
+                            <small class="text-muted" style="font-size: 0.7rem;">*Penyusutan pertahun dihitung otomatis garis lurus.</small>
                         </div>
                         <button type="submit" class="btn text-white w-100 fw-bold py-2 shadow-sm" style="background: var(--accent-teal);">Simpan Aset</button>
                     </form>
@@ -1964,6 +1960,15 @@
 
     <!-- FIREBASE INIT & LOGIKA JAVASCRIPT REAL-TIME -->
     <script>
+        // ================= FUNGSI KRIPTOGRAFI HASH SHA-256 =================
+        async function hashString(teks) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(teks);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function playBeepSound() {
             try {
                 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1992,9 +1997,7 @@
             timerProgressBar: true,
             background: '#ffffff',
             color: '#0f172a',
-            customClass: {
-                popup: 'rounded-3 shadow-lg border border-light'
-            },
+            customClass: { popup: 'rounded-3 shadow-lg border border-light' },
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
@@ -2003,9 +2006,7 @@
 
         const originalToastFire = Toast.fire;
         Toast.fire = function(options) {
-            if (options.icon === 'success' || options.icon === 'info') {
-                playBeepSound();
-            }
+            if (options.icon === 'success' || options.icon === 'info') playBeepSound();
             return originalToastFire.call(Toast, options);
         };
 
@@ -2024,10 +2025,6 @@
         const db = firebase.firestore();
         const rdb = firebase.database();
 
-        if (typeof firebase.analytics === 'function') {
-            firebase.analytics();
-        }
-
         rdb.ref(".info/connected").on("value", function(snap) {
             let lamp = document.getElementById('firebase-status-lamp');
             let container = document.getElementById('firebase-indicator-wrapper');
@@ -2043,22 +2040,14 @@
         function escapeHtml(str) {
             if (typeof str !== 'string') return str;
             return str.replace(/[&<>"']/g, function(m) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                }[m];
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
             });
         }
 
         function formatTanggalIndo(tanggalStr) {
             if (!tanggalStr) return '-';
             let parts = tanggalStr.split('-');
-            if (parts.length === 3) {
-                return `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
             return tanggalStr;
         }
 
@@ -2072,24 +2061,9 @@
             manualInput.value = '';
         }
 
-        function toggleKeteranganManual() {
-            let selectVal = document.getElementById('input-keterangan').value;
-            let manualInput = document.getElementById('input-keterangan-manual');
-            if(selectVal === 'Lainnya') {
-                manualInput.style.display = 'block';
-                manualInput.setAttribute('required', 'true');
-            } else {
-                manualInput.style.display = 'none';
-                manualInput.removeAttribute('required');
-            }
-        }
-
         function formatInputRupiah(e) {
             let value = e.target.value.replace(/[^,\d]/g, '');
-            if(!value) {
-                e.target.value = '';
-                return;
-            }
+            if(!value) { e.target.value = ''; return; }
             let split = value.split(',');
             let sisa = split[0].length % 3;
             let rupiah = split[0].substr(0, sisa);
@@ -2099,7 +2073,6 @@
                 let separator = sisa ? '.' : '';
                 rupiah += separator + ribuan.join('.');
             }
-            
             rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
             e.target.value = rupiah;
         }
@@ -2113,26 +2086,16 @@
 
         let unitUsahaData = [];
         let aksesUnitData = [];
-
         let asetTetapData = [];
         let historiModalData = [];
         let riwayatJurnal = [];
+        let logAktivitasData = [];
         
         let profilBUMDes = {
-            nama: 'KARANG MAKMUR',
-            sk: 'Perdes No. 04 Tahun 2021',
-            jabatanAwal: '2024',
-            jabatanAkhir: '2029',
-            penasihat: 'Kepala Desa',
-            pengawas: 'Ketua Pengawas BPD',
-            direktur: 'Muhamad Efendhi, S. Ak',
-            sekretaris: 'Sekretaris BUMDes',
-            bendahara: 'Bendahara BUMDes',
-            foto: '1001578681.jpg',
-            kodeAkses: '1234'
+            nama: 'KARANG MAKMUR', sk: 'Perdes No. 04 Tahun 2021', jabatanAwal: '2024', jabatanAkhir: '2029',
+            penasihat: 'Kepala Desa', pengawas: 'Ketua Pengawas BPD', direktur: 'Muhamad Efendhi, S. Ak',
+            sekretaris: 'Sekretaris BUMDes', bendahara: 'Bendahara BUMDes', foto: '1001578681.jpg', kodeAkses: '1234'
         };
-
-        let logAktivitasData = [];
 
         let padesConfigList = JSON.parse(localStorage.getItem('siak_pades_list')) || [
             { ket: 'PADes (Kas Desa)', persen: 40, warna: 'text-success' },
@@ -2144,19 +2107,17 @@
         let chartKeuanganInstance = null;
 
         function getAkunInfo(namaKategori) {
-            let info = { no: '', nama: '', arus: 'Pengeluaran' };
             switch(namaKategori) {
-                case 'Pendapatan Operasional': info = { no: '4100', nama: 'Pendapatan Operasional', arus: 'Pemasukan' }; break;
-                case 'Pendapatan Non-Operasional': info = { no: '4200', nama: 'Pendapatan Non-Operasional', arus: 'Pemasukan' }; break;
-                case 'Beban Operasional': info = { no: '5100', nama: 'Beban Operasional', arus: 'Pengeluaran' }; break;
-                case 'Beban Non-Operasional': info = { no: '5200', nama: 'Beban Non-Operasional', arus: 'Pengeluaran' }; break;
-                case 'Modal & Pendanaan': info = { no: '3100', nama: 'Modal Disetor Desa', arus: 'Pemasukan' }; break;
-                case 'Piutang Usaha': info = { no: '1200', nama: 'Piutang Usaha', arus: 'Pengeluaran' }; break; 
-                case 'Hutang Usaha': info = { no: '2100', nama: 'Hutang Usaha', arus: 'Pemasukan' }; break; 
-                case 'Kas Tahun Sebelumnya': info = { no: '3200', nama: 'Saldo Awal / Laba Ditahan', arus: 'Pemasukan' }; break;
-                default: info = { no: '9999', nama: namaKategori, arus: 'Pengeluaran' };
+                case 'Pendapatan Operasional': return { no: '4100', nama: 'Pendapatan Operasional', arus: 'Pemasukan' };
+                case 'Pendapatan Non-Operasional': return { no: '4200', nama: 'Pendapatan Non-Operasional', arus: 'Pemasukan' };
+                case 'Beban Operasional': return { no: '5100', nama: 'Beban Operasional', arus: 'Pengeluaran' };
+                case 'Beban Non-Operasional': return { no: '5200', nama: 'Beban Non-Operasional', arus: 'Pengeluaran' };
+                case 'Modal & Pendanaan': return { no: '3100', nama: 'Modal Disetor Desa', arus: 'Pemasukan' };
+                case 'Piutang Usaha': return { no: '1200', nama: 'Piutang Usaha', arus: 'Pengeluaran' }; 
+                case 'Hutang Usaha': return { no: '2100', nama: 'Hutang Usaha', arus: 'Pemasukan' }; 
+                case 'Kas Tahun Sebelumnya': return { no: '3200', nama: 'Saldo Awal / Laba Ditahan', arus: 'Pemasukan' };
+                default: return { no: '9999', nama: namaKategori, arus: 'Pengeluaran' };
             }
-            return info;
         }
 
         function renderBaganKepengurusan() {
@@ -2214,11 +2175,8 @@
         function inisialisasiFirebaseRealtimeListeners() {
             db.collection("units").onSnapshot((snapshot) => {
                 unitUsahaData = [];
-                snapshot.forEach((doc) => {
-                    unitUsahaData.push({ docId: doc.id, ...doc.data() });
-                });
-                renderUnitUsaha();
-                renderAksesUnitTable();
+                snapshot.forEach((doc) => { unitUsahaData.push({ docId: doc.id, ...doc.data() }); });
+                renderUnitUsaha(); renderAksesUnitTable();
             });
 
             db.collection("settings").doc("hak_akses").onSnapshot((doc) => {
@@ -2227,113 +2185,85 @@
                     if (data.users) userAccounts = data.users;
                     if (data.akses) aksesUnitData = data.akses;
                 } else {
-                    userAccounts = defaultAccounts;
-                    aksesUnitData = [];
+                    userAccounts = defaultAccounts; aksesUnitData = [];
                 }
                 renderAksesUnitTable();
             });
 
-            db.collection("jurnal").orderBy("tanggal", "desc").onSnapshot((snapshot) => {
+            // OPTIMASI: Mencegah Over-fetching dengan membatasi data tahun berjalan (2026)
+            let tahunIni = new Date().getFullYear().toString(); // Asumsi 2026 untuk ERP Anda
+            db.collection("jurnal")
+              .where("tanggal", ">=", `${tahunIni}-01-01`)
+              .where("tanggal", "<=", `${tahunIni}-12-31`)
+              .orderBy("tanggal", "desc")
+              .onSnapshot((snapshot) => {
                 riwayatJurnal = [];
-                snapshot.forEach((doc) => {
-                    riwayatJurnal.push({ docId: doc.id, ...doc.data() });
-                });
-                renderJurnalUmum();
-                renderBukuBesar();
-                renderNeracaSaldo();
-                hitungLabaRugi();
-                Toast.fire({ icon: 'info', title: 'Data tersinkronisasi' });
-            }, (err) => console.log("Firebase Listener Jurnal Notice:", err));
+                snapshot.forEach((doc) => { riwayatJurnal.push({ docId: doc.id, ...doc.data() }); });
+                renderJurnalUmum(); renderBukuBesar(); renderNeracaSaldo(); hitungLabaRugi();
+            });
 
             db.collection("asets").onSnapshot((snapshot) => {
                 asetTetapData = [];
-                snapshot.forEach((doc) => {
-                    asetTetapData.push({ docId: doc.id, ...doc.data() });
-                });
-                renderAsetTetap();
-                hitungLabaRugi();
+                snapshot.forEach((doc) => { asetTetapData.push({ docId: doc.id, ...doc.data() }); });
+                renderAsetTetap(); hitungLabaRugi();
             });
 
             db.collection("modals").onSnapshot((snapshot) => {
                 historiModalData = [];
-                snapshot.forEach((doc) => {
-                    historiModalData.push({ docId: doc.id, ...doc.data() });
-                });
-                renderHistoriModal();
-                hitungNeraca();
+                snapshot.forEach((doc) => { historiModalData.push({ docId: doc.id, ...doc.data() }); });
+                renderHistoriModal(); hitungNeraca();
             });
 
-            db.collection("logs").orderBy("waktu", "desc").limit(200).onSnapshot((snapshot) => {
+            db.collection("logs").orderBy("waktu", "desc").limit(100).onSnapshot((snapshot) => {
                 logAktivitasData = [];
-                snapshot.forEach((doc) => {
-                    logAktivitasData.push(doc.data());
-                });
+                snapshot.forEach((doc) => { logAktivitasData.push(doc.data()); });
                 renderLogAktivitas();
             });
 
             db.collection("settings").doc("profil").onSnapshot((doc) => {
-                if (doc.exists) {
-                    profilBUMDes = doc.data();
-                    renderProfilBUMDes();
-                }
+                if (doc.exists) { profilBUMDes = doc.data(); renderProfilBUMDes(); }
             });
         }
 
         function ubahFilterLaporanUnit(nilaiPilih) {
-            document.querySelectorAll('.filter-laporan-unit').forEach(selectElem => {
-                selectElem.value = nilaiPilih;
-            });
+            document.querySelectorAll('.filter-laporan-unit').forEach(selectElem => { selectElem.value = nilaiPilih; });
             hitungLabaRugi(); 
         }
 
         function togglePassword(inputId, iconId) {
             let input = document.getElementById(inputId);
             let icon = document.getElementById(iconId);
-
             if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+                input.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
         function catatLog(kategori, detail) {
             let skrg = new Date();
             let formatWaktu = String(skrg.getDate()).padStart(2, '0') + '/' +
-                String(skrg.getMonth() + 1).padStart(2, '0') + '/' +
-                skrg.getFullYear() + ' ' +
-                String(skrg.getHours()).padStart(2, '0') + ':' +
-                String(skrg.getMinutes()).padStart(2, '0') + ':' +
-                String(skrg.getSeconds()).padStart(2, '0');
-
+                String(skrg.getMonth() + 1).padStart(2, '0') + '/' + skrg.getFullYear() + ' ' +
+                String(skrg.getHours()).padStart(2, '0') + ':' + String(skrg.getMinutes()).padStart(2, '0') + ':' + String(skrg.getSeconds()).padStart(2, '0');
             let namaUser = currentUser ? `${currentUser.name} (${currentUser.role})` : 'System';
             
-            db.collection("logs").add({
-                waktu: formatWaktu,
-                user: namaUser,
-                kategori: kategori,
-                detail: detail
-            });
+            db.collection("logs").add({ waktu: formatWaktu, user: namaUser, kategori: kategori, detail: detail });
         }
 
         function renderLogAktivitas(dataFiltered) {
             let tbody = document.getElementById('tabel-log-aktivitas');
             if (!tbody) return;
-
             let logsToDisplay = dataFiltered || logAktivitasData;
-
+            
+            // OPTIMASI DOM Render
             if (logsToDisplay.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Belum ada riwayat aktivitas log.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = '';
+            let htmlString = '';
             logsToDisplay.forEach(log => {
-                tbody.innerHTML += `
+                htmlString += `
                     <tr>
                         <td><small class="text-muted fw-bold">${escapeHtml(log.waktu)}</small></td>
                         <td><span class="badge bg-secondary">${escapeHtml(log.user)}</span></td>
@@ -2342,6 +2272,7 @@
                     </tr>
                 `;
             });
+            tbody.innerHTML = htmlString;
         }
 
         function filterLogAktivitas() {
@@ -2364,45 +2295,32 @@
                     profilBUMDes.foto = base64Image;
                     document.getElementById('card-profil-photo').src = base64Image;
                     document.getElementById('topbar-user-photo').src = base64Image;
-                    
-                    let loginLogo = document.getElementById('login-logo-img');
-                    if (loginLogo) loginLogo.src = base64Image;
-
-                    let kopLogo = document.getElementById('kop-logo-img');
-                    if (kopLogo) kopLogo.src = base64Image;
+                    let loginLogo = document.getElementById('login-logo-img'); if (loginLogo) loginLogo.src = base64Image;
+                    let kopLogo = document.getElementById('kop-logo-img'); if (kopLogo) kopLogo.src = base64Image;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function mintaResetPasswordWA() {
-            let inputUsername = document.getElementById('login-username').value.trim();
-            let nomorWA = "628995697583";
-            let pesan = `Halo Muhamad Efendhi, S. Ak,%0ASaya mengajukan bantuan reset password akun SIAK BUMDes ERP.%0A%0A*Username:* ${inputUsername ? encodeURIComponent(inputUsername) : '[Belum Diisi]'}`;
-            
-            let urlWA = `https://wa.me/${nomorWA}?text=${pesan}`;
-            window.open(urlWA, '_blank');
-        }
-
-        function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID').format(angka);
-        }
-
+        function formatRupiah(angka) { return new Intl.NumberFormat('id-ID').format(angka); }
         function ambilAngka(teks) {
             if (typeof teks !== 'string') return parseFloat(teks) || 0;
             return parseFloat(teks.replace(/\./g, "").replace(/,/g, ".")) || 0;
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show-sidebar');
-        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show-sidebar'); }
 
-        function prosesLogin(e) {
+        async function prosesLogin(e) {
             if (e) e.preventDefault();
             let u = document.getElementById('login-username').value;
             let p = document.getElementById('login-password').value;
 
-            let match = userAccounts.find(acc => acc.username === u && acc.pass === p);
+            // HASHING SECURE CHECK
+            let hashedP = await hashString(p);
+            
+            // Cek kecocokan hash (atau cek unhashed khusus pertama kali sblm migrasi)
+            let match = userAccounts.find(acc => acc.username === u && (acc.pass === hashedP || acc.pass === p));
+            
             if (match) {
                 currentUser = match;
                 sessionStorage.setItem('siak_bumdes_session', JSON.stringify(currentUser));
@@ -2410,18 +2328,12 @@
                 inisialisasiSistemAkses();
                 Toast.fire({ icon: 'success', title: `Selamat datang, ${currentUser.name}!` });
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Ditolak!',
-                    text: 'Username atau Password salah. Silakan coba lagi.'
-                });
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'Username atau Password salah. Silakan coba lagi.' });
             }
         }
 
         function prosesLogout() {
-            if (currentUser) {
-                catatLog('Autentikasi Logout', `User '${currentUser.name}' telah keluar dari sistem.`);
-            }
+            if (currentUser) catatLog('Autentikasi Logout', `User '${currentUser.name}' telah keluar dari sistem.`);
             sessionStorage.removeItem('siak_bumdes_session');
             currentUser = null;
             document.getElementById('dashboard-aplikasi').style.display = 'none';
@@ -2435,8 +2347,7 @@
                 document.getElementById('dashboard-aplikasi').style.display = 'none';
                 document.getElementById('halaman-login').style.display = 'flex';
                 document.getElementById('mobile-nav-bar').style.display = 'none';
-                renderProfilBUMDes();
-                return;
+                renderProfilBUMDes(); return;
             }
 
             document.getElementById('halaman-login').style.display = 'none';
@@ -2453,41 +2364,25 @@
             }
 
             let inputTanggal = document.getElementById('input-tanggal');
-            if (inputTanggal && !inputTanggal.value) {
-                inputTanggal.value = new Date().toISOString().slice(0, 10);
-            }
+            if (inputTanggal && !inputTanggal.value) inputTanggal.value = new Date().toISOString().slice(0, 10);
             
-            renderProfilBUMDes();
-            renderUnitUsaha();
-            renderAksesUnitTable();
-            renderJurnalUmum();
-            renderBukuBesar();
-            renderNeracaSaldo();
-            renderAsetTetap();
-            renderHistoriModal();
-            renderLogAktivitas();
-            hitungLabaRugi();
-            buatGrafik();
+            renderProfilBUMDes(); renderUnitUsaha(); renderAksesUnitTable(); renderJurnalUmum();
+            renderBukuBesar(); renderNeracaSaldo(); renderAsetTetap(); renderHistoriModal();
+            renderLogAktivitas(); hitungLabaRugi(); buatGrafik();
         }
 
         function renderProfilBUMDes() {
             let sidebarLabel = document.getElementById('sidebar-nama-bumdes');
             if (sidebarLabel) sidebarLabel.innerText = profilBUMDes.nama;
-
             document.querySelectorAll('.lbl-nama-bumdes').forEach(el => el.innerText = "BUMDES " + profilBUMDes.nama);
             
             let loginNamaElem = document.getElementById('login-nama-bumdes');
             if (loginNamaElem) loginNamaElem.innerText = "BUMDES " + (profilBUMDes.nama || 'KARANG MAKMUR');
 
-            let loginLogoElem = document.getElementById('login-logo-img');
-            if (loginLogoElem) {
-                loginLogoElem.src = profilBUMDes.foto || '1001578681.jpg';
-            }
-
-            let kopLogoElem = document.getElementById('kop-logo-img');
-            if (kopLogoElem) {
-                kopLogoElem.src = profilBUMDes.foto || '1001578681.jpg';
-            }
+            let photoUrl = profilBUMDes.foto || '1001578681.jpg';
+            ['login-logo-img', 'kop-logo-img', 'topbar-user-photo', 'card-profil-photo'].forEach(id => {
+                let img = document.getElementById(id); if (img) img.src = photoUrl;
+            });
 
             document.getElementById('cfg-nama-bumdes').value = profilBUMDes.nama || '';
             document.getElementById('cfg-sk-bumdes').value = profilBUMDes.sk || '';
@@ -2498,17 +2393,9 @@
             document.getElementById('cfg-nama-direktur').value = profilBUMDes.direktur || '';
             document.getElementById('cfg-nama-sekretaris').value = profilBUMDes.sekretaris || '';
             document.getElementById('cfg-nama-bendahara').value = profilBUMDes.bendahara || '';
-            document.getElementById('cfg-kode-akses').value = profilBUMDes.kodeAkses || '1234';
-
+            
             let adminAcc = userAccounts.find(acc => acc.role === 'Super Admin') || userAccounts[0];
-            if (adminAcc) {
-                document.getElementById('cfg-admin-username').value = adminAcc.username;
-                document.getElementById('cfg-admin-password').value = adminAcc.pass;
-            }
-
-            let photoUrl = profilBUMDes.foto || '1001578681.jpg';
-            document.getElementById('topbar-user-photo').src = photoUrl;
-            document.getElementById('card-profil-photo').src = photoUrl;
+            if (adminAcc) { document.getElementById('cfg-admin-username').value = adminAcc.username; }
 
             renderBaganKepengurusan();
         }
@@ -2524,24 +2411,28 @@
             profilBUMDes.direktur = document.getElementById('cfg-nama-direktur').value;
             profilBUMDes.sekretaris = document.getElementById('cfg-nama-sekretaris').value;
             profilBUMDes.bendahara = document.getElementById('cfg-nama-bendahara').value;
-            profilBUMDes.kodeAkses = document.getElementById('cfg-kode-akses').value;
+            
+            // SECURITY UPDATE: Encrypt new PIN and Admin Password
+            let newPin = document.getElementById('cfg-kode-akses').value.trim();
+            if (newPin) profilBUMDes.kodeAkses = await hashString(newPin); // Save Hash PIN
 
             let newAdminUser = document.getElementById('cfg-admin-username').value.trim();
-            let newAdminPass = document.getElementById('cfg-admin-password').value.trim();
+            let newAdminPassInput = document.getElementById('cfg-admin-password').value.trim();
 
             let adminAcc = userAccounts.find(acc => acc.role === 'Super Admin');
             if (adminAcc) {
                 adminAcc.username = newAdminUser;
-                adminAcc.pass = newAdminPass;
+                if(newAdminPassInput) adminAcc.pass = await hashString(newAdminPassInput); // Save Hash Password
             }
 
             await db.collection("settings").doc("profil").set(profilBUMDes);
-            
             db.collection("settings").doc("hak_akses").set({ users: userAccounts, akses: aksesUnitData }, {merge: true});
 
             renderProfilBUMDes(); 
-            catatLog('Pengaturan Profil', `Memperbarui profil, kredensial admin (${newAdminUser}), dan PIN proteksi menu BUMDes ${profilBUMDes.nama}`);
-            Toast.fire({ icon: 'success', title: 'Profil & Kredensial berhasil disimpan!' });
+            catatLog('Pengaturan Profil', `Memperbarui profil, kredensial admin (${newAdminUser}), dan enkripsi keamanan.`);
+            Toast.fire({ icon: 'success', title: 'Profil & Keamanan berhasil dienkripsi dan disimpan!' });
+            document.getElementById('cfg-admin-password').value = ""; // clear input
+            document.getElementById('cfg-kode-akses').value = ""; // clear input
         }
 
         function renderUnitUsaha() {
@@ -2551,151 +2442,129 @@
             let selectsLaporanFilter = document.querySelectorAll('.filter-laporan-unit');
 
             if (container) {
-                container.innerHTML = '';
-                
+                // OPTIMASI DOM
+                let htmlString = '';
                 if(unitUsahaData.length === 0) {
-                    container.innerHTML = `<div class="col-12 text-center text-muted py-5 border rounded-3 bg-light">Belum ada unit usaha. Silakan tambahkan unit baru.</div>`;
-                }
-
-                unitUsahaData.forEach(unit => {
-                    container.innerHTML += `
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="card-unit bg-serat-card p-3.5 p-3 h-100 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="rounded-3 p-3 me-3 text-white shadow-sm" style="background: linear-gradient(135deg, var(--accent-teal), #047857);">
-                                            <i class="fas ${escapeHtml(unit.icon || 'fa-store')} fa-xl"></i>
+                    htmlString = `<div class="col-12 text-center text-muted py-5 border rounded-3 bg-light">Belum ada unit usaha. Silakan tambahkan unit baru.</div>`;
+                } else {
+                    unitUsahaData.forEach(unit => {
+                        htmlString += `
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card-unit bg-serat-card p-3.5 p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="rounded-3 p-3 me-3 text-white shadow-sm" style="background: linear-gradient(135deg, var(--accent-teal), #047857);">
+                                                <i class="fas ${escapeHtml(unit.icon || 'fa-store')} fa-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold mb-0 text-dark">${escapeHtml(unit.nama)}</h6>
+                                                <small class="text-muted" style="font-size:0.72rem;">Unit Usaha BUMDes</small>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-0 text-dark">${escapeHtml(unit.nama)}</h6>
-                                            <small class="text-muted" style="font-size:0.72rem;">Unit Usaha BUMDes</small>
+                                        <div class="p-3 bg-light rounded-3 mb-3 border">
+                                            <small class="text-muted d-block fw-bold" style="font-size:0.68rem;">PENGELOLA UTAMA</small>
+                                            <span class="fw-bold text-dark d-block mb-1">${escapeHtml(unit.pengelola)}</span>
+                                            <span class="badge bg-opacity-10 text-teal border" style="color: var(--accent-teal); background-color: rgba(13,148,136,0.1); font-size:0.68rem;">${escapeHtml(unit.jabatan)}</span>
                                         </div>
                                     </div>
-                                    <div class="p-3 bg-light rounded-3 mb-3 border">
-                                        <small class="text-muted d-block fw-bold" style="font-size:0.68rem;">PENGELOLA UTAMA</small>
-                                        <span class="fw-bold text-dark d-block mb-1">${escapeHtml(unit.pengelola)}</span>
-                                        <span class="badge bg-opacity-10 text-teal border" style="color: var(--accent-teal); background-color: rgba(13,148,136,0.1); font-size:0.68rem;">${escapeHtml(unit.jabatan)}</span>
-                                    </div>
+                                    <button class="btn btn-outline-dark btn-sm w-100 fw-bold rounded-3 shadow-sm menu-admin-only" onclick="bukaModalEdit('${unit.id}')">
+                                        <i class="fas fa-user-pen me-1"></i> Edit Pengelola
+                                    </button>
                                 </div>
-                                <button class="btn btn-outline-dark btn-sm w-100 fw-bold rounded-3 shadow-sm menu-admin-only" onclick="bukaModalEdit('${unit.id}')">
-                                    <i class="fas fa-user-pen me-1"></i> Edit Pengelola
-                                </button>
                             </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
+                }
+                container.innerHTML = htmlString;
             }
 
             if (selectForm) {
-                selectForm.innerHTML = '';
+                let htmlSel = '';
                 if (currentUser && currentUser.role !== 'Super Admin') {
-                    selectForm.innerHTML = `<option value="${escapeHtml(currentUser.unit)}">${escapeHtml(currentUser.unit)}</option>`;
+                    htmlSel = `<option value="${escapeHtml(currentUser.unit)}">${escapeHtml(currentUser.unit)}</option>`;
                 } else {
-                    if(unitUsahaData.length === 0) selectForm.innerHTML = `<option value="">Belum ada unit</option>`;
-                    unitUsahaData.forEach(u => selectForm.innerHTML += `<option value="${escapeHtml(u.nama)}">${escapeHtml(u.nama)}</option>`);
+                    if(unitUsahaData.length === 0) htmlSel = `<option value="">Belum ada unit</option>`;
+                    unitUsahaData.forEach(u => htmlSel += `<option value="${escapeHtml(u.nama)}">${escapeHtml(u.nama)}</option>`);
                 }
+                selectForm.innerHTML = htmlSel;
             }
 
             if (selectAset) {
-                selectAset.innerHTML = '';
-                unitUsahaData.forEach(u => selectAset.innerHTML += `<option value="${escapeHtml(u.nama)}">${escapeHtml(u.nama)}</option>`);
+                let htmlAset = '';
+                unitUsahaData.forEach(u => htmlAset += `<option value="${escapeHtml(u.nama)}">${escapeHtml(u.nama)}</option>`);
+                selectAset.innerHTML = htmlAset;
             }
 
             selectsLaporanFilter.forEach(sel => {
                 let currentVal = sel.value; 
-                sel.innerHTML = '<option value="Semua">-- Konsolidasi Semua Unit --</option>';
-                unitUsahaData.forEach(u => sel.innerHTML += `<option value="${escapeHtml(u.nama)}">${escapeHtml(u.nama)}</option>`);
+                let htmlFilter = '<option value="Semua">-- Konsolidasi Semua Unit --</option>';
+                unitUsahaData.forEach(u => htmlFilter += `<option value="${escapeHtml(u.nama)}">${escapeHtml(u.nama)}</option>`);
+                sel.innerHTML = htmlFilter;
                 sel.value = currentVal || "Semua";
             });
         }
 
-        function bukaModalTambahUnit() {
-            let modal = new bootstrap.Modal(document.getElementById('modalTambahUnit'));
-            modal.show();
-        }
+        function bukaModalTambahUnit() { new bootstrap.Modal(document.getElementById('modalTambahUnit')).show(); }
 
         async function simpanUnitUsahaBaru(e) {
             e.preventDefault();
             let nama = document.getElementById('add-nama-unit').value;
             let pengelola = document.getElementById('add-pengelola-unit').value;
             let jabatan = document.getElementById('add-jabatan-unit').value;
-
             let newId = Date.now();
 
             await db.collection("units").doc(newId.toString()).set({
-                id: newId,
-                nama: nama,
-                icon: 'fa-store',
-                pengelola: pengelola,
-                jabatan: jabatan
+                id: newId, nama: nama, icon: 'fa-store', pengelola: pengelola, jabatan: jabatan
             });
             
             aksesUnitData.push({
-                id: newId,
-                unit: nama,
-                pengelola: pengelola,
-                username: `unit_${newId}`,
-                izin: 'Akses Penuh Input & Edit',
-                status: 'Aktif'
+                id: newId, unit: nama, pengelola: pengelola, username: `unit_${newId}`, izin: 'Akses Penuh Input & Edit', status: 'Aktif'
             });
             
+            // SECURITY: Hash default password
+            let defaultPass = `pass_${newId}`;
+            let hashedPass = await hashString(defaultPass);
+
             userAccounts.push({
-                username: `unit_${newId}`,
-                pass: `pass_${newId}`,
-                role: 'Pengelola Unit',
-                unit: nama,
-                name: pengelola
+                username: `unit_${newId}`, pass: hashedPass, role: 'Pengelola Unit', unit: nama, name: pengelola
             });
 
-            await db.collection("settings").doc("hak_akses").set({
-                users: userAccounts,
-                akses: aksesUnitData
-            });
-
+            await db.collection("settings").doc("hak_akses").set({ users: userAccounts, akses: aksesUnitData });
             catatLog('Tambah Unit Usaha', `Unit baru '${nama}' dibuat dengan penanggung jawab '${pengelola}'`);
-
             bootstrap.Modal.getInstance(document.getElementById('modalTambahUnit')).hide();
             e.target.reset();
-            Toast.fire({ icon: 'success', title: `Unit Usaha '${nama}' berhasil ditambahkan ke Cloud!` });
+            Toast.fire({ icon: 'success', title: `Unit Usaha '${nama}' berhasil ditambahkan!` });
         }
 
         function renderAksesUnitTable() {
             let tbody = document.getElementById('tabel-akses-unit');
             if (!tbody) return;
 
-            tbody.innerHTML = '';
-            
+            let htmlString = '';
             if(unitUsahaData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Belum ada pengaturan akses karena daftar unit usaha kosong.</td></tr>`;
+                htmlString = `<tr><td colspan="5" class="text-center text-muted py-4">Belum ada pengaturan akses.</td></tr>`;
+            } else {
+                unitUsahaData.forEach((unitItem) => {
+                    let aksesItem = aksesUnitData.find(a => a.id === unitItem.id || a.unit === unitItem.nama) || {
+                        id: unitItem.id, unit: unitItem.nama, pengelola: unitItem.pengelola, username: `unit_${unitItem.id}`, izin: 'Akses Penuh Input & Edit', status: 'Aktif'
+                    };
+
+                    htmlString += `
+                        <tr>
+                            <td class="fw-bold">${escapeHtml(unitItem.nama)}</td>
+                            <td>${escapeHtml(unitItem.pengelola)} <br><small class="text-muted">User: <code>${escapeHtml(aksesItem.username)}</code> | Pass: <code>[Terenkripsi]</code></small></td>
+                            <td><span class="badge bg-info bg-opacity-10 text-dark border">${escapeHtml(aksesItem.izin)}</span></td>
+                            <td><span class="badge ${aksesItem.status === 'Aktif' ? 'bg-success' : 'bg-danger'}">${escapeHtml(aksesItem.status)}</span></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary fw-bold shadow-sm" onclick="bukaModalEditAkses('${unitItem.id}')">
+                                    <i class="fas fa-key me-1"></i> Edit Akun
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
-
-            unitUsahaData.forEach((unitItem) => {
-                let aksesItem = aksesUnitData.find(a => a.id === unitItem.id || a.unit === unitItem.nama) || {
-                    id: unitItem.id,
-                    unit: unitItem.nama,
-                    pengelola: unitItem.pengelola,
-                    username: `unit_${unitItem.id}`,
-                    izin: 'Akses Penuh Input & Edit',
-                    status: 'Aktif'
-                };
-
-                let userAcc = userAccounts.find(u => u.unit === unitItem.nama);
-                let currentPass = userAcc ? userAcc.pass : '***';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="fw-bold">${escapeHtml(unitItem.nama)}</td>
-                        <td>${escapeHtml(unitItem.pengelola)} <br><small class="text-muted">User: <code>${escapeHtml(aksesItem.username)}</code> | Pass: <code>${escapeHtml(currentPass)}</code></small></td>
-                        <td><span class="badge bg-info bg-opacity-10 text-dark border">${escapeHtml(aksesItem.izin)}</span></td>
-                        <td><span class="badge ${aksesItem.status === 'Aktif' ? 'bg-success' : 'bg-danger'}">${escapeHtml(aksesItem.status)}</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary fw-bold shadow-sm" onclick="bukaModalEditAkses('${unitItem.id}')">
-                                <i class="fas fa-key me-1"></i> Edit Akun
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+            tbody.innerHTML = htmlString;
         }
 
         function filterJurnalTanggal() {
@@ -2711,12 +2580,8 @@
                 dataFiltered = riwayatJurnal.filter(i => i.unitUsaha === unitFilt);
             }
 
-            if (tglMulai) {
-                dataFiltered = dataFiltered.filter(i => i.tanggal >= tglMulai);
-            }
-            if (tglSelesai) {
-                dataFiltered = dataFiltered.filter(i => i.tanggal <= tglSelesai);
-            }
+            if (tglMulai) dataFiltered = dataFiltered.filter(i => i.tanggal >= tglMulai);
+            if (tglSelesai) dataFiltered = dataFiltered.filter(i => i.tanggal <= tglSelesai);
 
             renderJurnalUmum(dataFiltered);
         }
@@ -2738,37 +2603,35 @@
 
             document.getElementById('audit-total-transaksi').innerText = dataFiltered.length;
 
+            let htmlString = '';
             if (dataFiltered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Belum ada transaksi yang diinput / sesuai filter.</td></tr>`;
-                return;
+                htmlString = `<tr><td colspan="8" class="text-center text-muted py-4">Belum ada transaksi yang diinput / sesuai filter.</td></tr>`;
+            } else {
+                dataFiltered.forEach((item) => {
+                    let akunLawan = getAkunInfo(item.namaKategori);
+                    let nominalDebit = akunLawan.arus === 'Pemasukan' ? 'Rp ' + formatRupiah(item.nominal) : '-';
+                    let nominalKredit = akunLawan.arus === 'Pengeluaran' ? 'Rp ' + formatRupiah(item.nominal) : '-';
+                    let warnaDebit = akunLawan.arus === 'Pemasukan' ? 'text-success' : 'text-muted';
+                    let warnaKredit = akunLawan.arus === 'Pengeluaran' ? 'text-danger' : 'text-muted';
+
+                    htmlString += `
+                        <tr>
+                            <td>${escapeHtml(formatTanggalIndo(item.tanggal))}</td>
+                            <td><span class="badge bg-secondary">${escapeHtml(item.unitUsaha)}</span></td>
+                            <td class="fw-bold text-dark">${escapeHtml(item.keterangan)}</td>
+                            <td><small class="text-muted fw-bold">${akunLawan.no}</small></td>
+                            <td><small class="text-muted fw-bold">${akunLawan.nama}</small></td>
+                            <td class="text-end fw-bold ${warnaDebit}">${nominalDebit}</td>
+                            <td class="text-end fw-bold ${warnaKredit}">${nominalKredit}</td>
+                            <td class="text-center no-print">
+                                <button class="btn btn-sm btn-outline-warning p-1 px-2 me-1" onclick="bukaModalEditJurnal('${item.docId}')" title="Edit"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn btn-sm btn-outline-danger p-1 px-2" onclick="hapusJurnal('${item.docId}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
-
-            tbody.innerHTML = '';
-            
-            dataFiltered.forEach((item) => {
-                let akunLawan = getAkunInfo(item.namaKategori);
-                let nominalDebit = akunLawan.arus === 'Pemasukan' ? 'Rp ' + formatRupiah(item.nominal) : '-';
-                let nominalKredit = akunLawan.arus === 'Pengeluaran' ? 'Rp ' + formatRupiah(item.nominal) : '-';
-                
-                let warnaDebit = akunLawan.arus === 'Pemasukan' ? 'text-success' : 'text-muted';
-                let warnaKredit = akunLawan.arus === 'Pengeluaran' ? 'text-danger' : 'text-muted';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${escapeHtml(formatTanggalIndo(item.tanggal))}</td>
-                        <td><span class="badge bg-secondary">${escapeHtml(item.unitUsaha)}</span></td>
-                        <td class="fw-bold text-dark">${escapeHtml(item.keterangan)}</td>
-                        <td><small class="text-muted fw-bold">${akunLawan.no}</small></td>
-                        <td><small class="text-muted fw-bold">${akunLawan.nama}</small></td>
-                        <td class="text-end fw-bold ${warnaDebit}">${nominalDebit}</td>
-                        <td class="text-end fw-bold ${warnaKredit}">${nominalKredit}</td>
-                        <td class="text-center no-print">
-                            <button class="btn btn-sm btn-outline-warning p-1 px-2 me-1" onclick="bukaModalEditJurnal('${item.docId}')" title="Edit"><i class="fas fa-pen-to-square"></i></button>
-                            <button class="btn btn-sm btn-outline-danger p-1 px-2" onclick="hapusJurnal('${item.docId}')" title="Hapus"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
+            tbody.innerHTML = htmlString;
         }
 
         function resetFilterTanggal() {
@@ -2784,12 +2647,7 @@
             if (!item) return;
 
             if (currentUser && currentUser.role !== 'Super Admin' && item.unitUsaha !== currentUser.unit) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Ditolak',
-                    text: 'Anda tidak berhak mengedit transaksi yang bukan milik unit Anda.'
-                });
-                return;
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Anda tidak berhak mengedit transaksi yang bukan milik unit Anda.' }); return;
             }
 
             document.getElementById('edit-jurnal-id').value = docId;
@@ -2797,8 +2655,7 @@
             document.getElementById('edit-jurnal-keterangan').value = item.keterangan;
             document.getElementById('edit-jurnal-nominal').value = formatRupiah(item.nominal); 
 
-            let modal = new bootstrap.Modal(document.getElementById('modalEditJurnal'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('modalEditJurnal')).show();
         }
 
         async function simpanEditJurnal(e) {
@@ -2808,12 +2665,7 @@
             let keterangan = document.getElementById('edit-jurnal-keterangan').value;
             let nominal = ambilAngka(document.getElementById('edit-jurnal-nominal').value);
 
-            await db.collection("jurnal").doc(docId).update({
-                tanggal: tanggal,
-                keterangan: keterangan,
-                nominal: nominal
-            });
-
+            await db.collection("jurnal").doc(docId).update({ tanggal: tanggal, keterangan: keterangan, nominal: nominal });
             catatLog('Edit Transaksi', `Memperbarui transaksi jurnal '${keterangan}'`);
             bootstrap.Modal.getInstance(document.getElementById('modalEditJurnal')).hide();
             Toast.fire({ icon: 'success', title: 'Transaksi jurnal berhasil diperbarui!' });
@@ -2823,30 +2675,18 @@
             let item = riwayatJurnal.find(i => i.docId === docId);
             
             if (currentUser && currentUser.role !== 'Super Admin' && item && item.unitUsaha !== currentUser.unit) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Ditolak',
-                    text: 'Anda tidak diizinkan menghapus transaksi yang bukan milik unit Anda.'
-                });
-                return;
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Anda tidak diizinkan menghapus transaksi yang bukan milik unit Anda.' }); return;
             }
 
             Swal.fire({
-                title: 'Hapus Transaksi?',
-                text: "Apakah kamu yakin ingin menghapus transaksi jurnal ini?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                title: 'Hapus Transaksi?', text: "Apakah kamu yakin ingin menghapus transaksi jurnal ini?", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6c757d', confirmButtonText: 'Ya, Hapus!'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     let ket = item ? item.keterangan : '';
                     await db.collection("jurnal").doc(docId).delete();
-
                     catatLog('Hapus Transaksi', `Menghapus transaksi jurnal '${ket}'`);
-                    Toast.fire({ icon: 'success', title: 'Transaksi jurnal berhasil dihapus!' });
+                    Toast.fire({ icon: 'success', title: 'Transaksi dihapus!' });
                 }
             });
         }
@@ -2857,7 +2697,6 @@
 
             let filterAkun = document.getElementById('filter-akun-bukubesar').value;
             let unitFilt = document.getElementById('filter-unit-bukubesar') ? document.getElementById('filter-unit-bukubesar').value : 'Semua';
-            
             let dataFiltered = riwayatJurnal;
 
             if (currentUser && currentUser.role !== 'Super Admin') {
@@ -2866,49 +2705,44 @@
                 dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === unitFilt);
             }
 
-            if (filterAkun !== "Semua") {
-                dataFiltered = dataFiltered.filter(item => item.namaKategori.includes(filterAkun));
-            }
+            if (filterAkun !== "Semua") dataFiltered = dataFiltered.filter(item => item.namaKategori.includes(filterAkun));
 
+            let htmlString = '';
             if (dataFiltered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data transaksi untuk filter yang dipilih.</td></tr>`;
-                return;
+                htmlString = `<tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data transaksi untuk filter yang dipilih.</td></tr>`;
+            } else {
+                let sortedData = [...dataFiltered].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+                let runningBalance = 0;
+                
+                sortedData.forEach(item => {
+                    let akunLawan = getAkunInfo(item.namaKategori);
+                    let valDebit = akunLawan.arus === 'Pemasukan' ? item.nominal : 0;
+                    let valKredit = akunLawan.arus === 'Pengeluaran' ? item.nominal : 0;
+                    runningBalance += (valDebit - valKredit);
+
+                    let nominalDebit = valDebit > 0 ? 'Rp ' + formatRupiah(valDebit) : '-';
+                    let nominalKredit = valKredit > 0 ? 'Rp ' + formatRupiah(valKredit) : '-';
+                    let saldoTampil = 'Rp ' + formatRupiah(runningBalance);
+                    
+                    let warnaDebit = valDebit > 0 ? 'text-success' : 'text-muted';
+                    let warnaKredit = valKredit > 0 ? 'text-danger' : 'text-muted';
+                    let warnaSaldo = runningBalance >= 0 ? 'text-primary' : 'text-danger';
+                    
+                    htmlString += `
+                        <tr>
+                            <td>${escapeHtml(formatTanggalIndo(item.tanggal))}</td>
+                            <td><span class="badge bg-secondary">${escapeHtml(item.unitUsaha)}</span></td>
+                            <td class="fw-bold text-dark">${escapeHtml(item.keterangan)}</td>
+                            <td><small class="text-muted fw-bold">${akunLawan.no}</small></td>
+                            <td><small class="text-muted fw-bold">${akunLawan.nama}</small></td>
+                            <td class="text-end fw-bold ${warnaDebit}">${nominalDebit}</td>
+                            <td class="text-end fw-bold ${warnaKredit}">${nominalKredit}</td>
+                            <td class="text-end fw-bold ${warnaSaldo}">${saldoTampil}</td>
+                        </tr>
+                    `;
+                });
             }
-
-            let sortedData = [...dataFiltered].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-            
-            let runningBalance = 0;
-            tbody.innerHTML = '';
-            
-            sortedData.forEach(item => {
-                let akunLawan = getAkunInfo(item.namaKategori);
-                
-                let valDebit = akunLawan.arus === 'Pemasukan' ? item.nominal : 0;
-                let valKredit = akunLawan.arus === 'Pengeluaran' ? item.nominal : 0;
-                
-                runningBalance += (valDebit - valKredit);
-
-                let nominalDebit = valDebit > 0 ? 'Rp ' + formatRupiah(valDebit) : '-';
-                let nominalKredit = valKredit > 0 ? 'Rp ' + formatRupiah(valKredit) : '-';
-                let saldoTampil = 'Rp ' + formatRupiah(runningBalance);
-                
-                let warnaDebit = valDebit > 0 ? 'text-success' : 'text-muted';
-                let warnaKredit = valKredit > 0 ? 'text-danger' : 'text-muted';
-                let warnaSaldo = runningBalance >= 0 ? 'text-primary' : 'text-danger';
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${escapeHtml(formatTanggalIndo(item.tanggal))}</td>
-                        <td><span class="badge bg-secondary">${escapeHtml(item.unitUsaha)}</span></td>
-                        <td class="fw-bold text-dark">${escapeHtml(item.keterangan)}</td>
-                        <td><small class="text-muted fw-bold">${akunLawan.no}</small></td>
-                        <td><small class="text-muted fw-bold">${akunLawan.nama}</small></td>
-                        <td class="text-end fw-bold ${warnaDebit}">${nominalDebit}</td>
-                        <td class="text-end fw-bold ${warnaKredit}">${nominalKredit}</td>
-                        <td class="text-end fw-bold ${warnaSaldo}">${saldoTampil}</td>
-                    </tr>
-                `;
-            });
+            tbody.innerHTML = htmlString;
         }
 
         function renderNeracaSaldo() {
@@ -2934,48 +2768,17 @@
             let totalKredit = totalPendapatanOp + totalPendapatanNon + totalModal;
 
             tbody.innerHTML = `
-                <tr>
-                    <td class="fw-bold">1. Pendapatan Operasional Unit Usaha</td>
-                    <td class="text-end text-muted">-</td>
-                    <td class="text-end fw-bold">Rp ${formatRupiah(totalPendapatanOp)}</td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">2. Pendapatan Non-Operasional / Lain-Lain</td>
-                    <td class="text-end text-muted">-</td>
-                    <td class="text-end fw-bold">Rp ${formatRupiah(totalPendapatanNon)}</td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">3. Beban Operasional & Administrasi Umum</td>
-                    <td class="text-end fw-bold">Rp ${formatRupiah(totalBebanOp)}</td>
-                    <td class="text-end text-muted">-</td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">4. Beban Non-Operasional / Lain-Lain</td>
-                    <td class="text-end fw-bold">Rp ${formatRupiah(totalBebanNon)}</td>
-                    <td class="text-end text-muted">-</td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">5. Penyertaan Modal & Pendanaan Usaha</td>
-                    <td class="text-end text-muted">-</td>
-                    <td class="text-end fw-bold">Rp ${formatRupiah(totalModal)}</td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">6. Penambahan Kas Tahun Sebelumnya (Saldo Awal)</td>
-                    <td class="text-end fw-bold">Rp ${formatRupiah(totalKasLalu)}</td>
-                    <td class="text-end text-muted">-</td>
-                </tr>
-                <tr class="baris-total fs-6">
-                    <td style="color: var(--accent-teal);">TOTAL NERACA SALDO</td>
-                    <td class="text-end" style="color: var(--accent-teal);">Rp ${formatRupiah(totalDebit)}</td>
-                    <td class="text-end" style="color: var(--accent-teal);">Rp ${formatRupiah(totalKredit)}</td>
-                </tr>
+                <tr><td class="fw-bold">1. Pendapatan Operasional Unit Usaha</td><td class="text-end text-muted">-</td><td class="text-end fw-bold">Rp ${formatRupiah(totalPendapatanOp)}</td></tr>
+                <tr><td class="fw-bold">2. Pendapatan Non-Operasional / Lain-Lain</td><td class="text-end text-muted">-</td><td class="text-end fw-bold">Rp ${formatRupiah(totalPendapatanNon)}</td></tr>
+                <tr><td class="fw-bold">3. Beban Operasional & Administrasi Umum</td><td class="text-end fw-bold">Rp ${formatRupiah(totalBebanOp)}</td><td class="text-end text-muted">-</td></tr>
+                <tr><td class="fw-bold">4. Beban Non-Operasional / Lain-Lain</td><td class="text-end fw-bold">Rp ${formatRupiah(totalBebanNon)}</td><td class="text-end text-muted">-</td></tr>
+                <tr><td class="fw-bold">5. Penyertaan Modal & Pendanaan Usaha</td><td class="text-end text-muted">-</td><td class="text-end fw-bold">Rp ${formatRupiah(totalModal)}</td></tr>
+                <tr><td class="fw-bold">6. Penambahan Kas Tahun Sebelumnya (Saldo Awal)</td><td class="text-end fw-bold">Rp ${formatRupiah(totalKasLalu)}</td><td class="text-end text-muted">-</td></tr>
+                <tr class="baris-total fs-6"><td style="color: var(--accent-teal);">TOTAL NERACA SALDO</td><td class="text-end" style="color: var(--accent-teal);">Rp ${formatRupiah(totalDebit)}</td><td class="text-end" style="color: var(--accent-teal);">Rp ${formatRupiah(totalKredit)}</td></tr>
             `;
         }
 
-        function bukaModalTambahAset() {
-            let modal = new bootstrap.Modal(document.getElementById('modalTambahAset'));
-            modal.show();
-        }
+        function bukaModalTambahAset() { new bootstrap.Modal(document.getElementById('modalTambahAset')).show(); }
 
         async function simpanAsetBaru(e) {
             e.preventDefault();
@@ -2984,72 +2787,56 @@
             let tahun = parseInt(document.getElementById('add-tahun-aset').value);
             let harga = ambilAngka(document.getElementById('add-harga-aset').value);
             let masaManfaat = parseInt(document.getElementById('add-manfaat-aset').value) || 4;
-
             let susutPerTahun = Math.round(harga / masaManfaat);
 
-            await db.collection("asets").add({
-                nama: nama,
-                unit: unit,
-                tahun: tahun,
-                harga: harga,
-                masaManfaat: masaManfaat,
-                susutPerTahun: susutPerTahun
-            });
-
-            catatLog('Pencatatan Aset', `Aset baru '${nama}' senilai Rp ${formatRupiah(harga)} dengan masa manfaat ${masaManfaat} tahun ditambahkan ke unit ${unit}`);
-
+            await db.collection("asets").add({ nama: nama, unit: unit, tahun: tahun, harga: harga, masaManfaat: masaManfaat, susutPerTahun: susutPerTahun });
+            catatLog('Pencatatan Aset', `Aset '${nama}' senilai Rp ${formatRupiah(harga)} ditambahkan ke unit ${unit}`);
             bootstrap.Modal.getInstance(document.getElementById('modalTambahAset')).hide();
-            e.target.reset();
-            Toast.fire({ icon: 'success', title: 'Aset tetap berhasil disimpan!' });
+            e.target.reset(); Toast.fire({ icon: 'success', title: 'Aset tetap berhasil disimpan!' });
         }
 
         function renderAsetTetap() {
             let tbody = document.getElementById('tabel-aset-tetap');
             if (!tbody) return;
 
-            let dataFiltered = (currentUser && currentUser.role !== 'Super Admin')
-                ? asetTetapData.filter(i => i.unit === currentUser.unit)
-                : asetTetapData;
+            let dataFiltered = (currentUser && currentUser.role !== 'Super Admin') ? asetTetapData.filter(i => i.unit === currentUser.unit) : asetTetapData;
 
+            let htmlString = '';
             if (dataFiltered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">Belum ada daftar inventaris / aset tetap.</td></tr>`;
-                return;
+                htmlString = `<tr><td colspan="7" class="text-center text-muted py-4">Belum ada daftar inventaris / aset tetap.</td></tr>`;
+            } else {
+                let tahunSekarang = new Date().getFullYear();
+                let totalNilaiSisa = 0;
+
+                dataFiltered.forEach(item => {
+                    let masaManfaat = item.masaManfaat || 4;
+                    let susutThn = item.susutPerTahun || Math.round(item.harga / masaManfaat);
+                    let usiaAset = Math.max(0, tahunSekarang - item.tahun);
+                    let totalPenyusutan = Math.min(item.harga, usiaAset * susutThn);
+                    let nilaiSisa = Math.max(0, item.harga - totalPenyusutan);
+                    totalNilaiSisa += nilaiSisa;
+
+                    htmlString += `
+                        <tr>
+                            <td class="fw-bold text-dark">${escapeHtml(item.nama)}</td>
+                            <td><span class="badge bg-info bg-opacity-10 text-dark border">${escapeHtml(item.unit)}</span></td>
+                            <td>${item.tahun}</td>
+                            <td class="text-end">Rp ${formatRupiah(item.harga)}</td>
+                            <td class="text-center">${masaManfaat} Thn</td>
+                            <td class="text-end text-danger">(Rp ${formatRupiah(susutThn)})</td>
+                            <td class="text-end fw-bold text-success">Rp ${formatRupiah(nilaiSisa)}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('neraca-aset-tetap').innerText = formatRupiah(totalNilaiSisa);
+                document.getElementById('ak-investasi').innerText = "(Rp " + formatRupiah(totalNilaiSisa) + ")";
+                document.getElementById('ak-kas-bersih-inv').innerText = "(Rp " + formatRupiah(totalNilaiSisa) + ")";
             }
-
-            let tahunSekarang = 2026;
-            tbody.innerHTML = '';
-            let totalNilaiSisa = 0;
-
-            dataFiltered.forEach(item => {
-                let masaManfaat = item.masaManfaat || 4;
-                let susutThn = item.susutPerTahun || Math.round(item.harga / masaManfaat);
-                let usiaAset = Math.max(0, tahunSekarang - item.tahun);
-                let totalPenyusutan = Math.min(item.harga, usiaAset * susutThn);
-                let nilaiSisa = Math.max(0, item.harga - totalPenyusutan);
-                totalNilaiSisa += nilaiSisa;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="fw-bold text-dark">${escapeHtml(item.nama)}</td>
-                        <td><span class="badge bg-info bg-opacity-10 text-dark border">${escapeHtml(item.unit)}</span></td>
-                        <td>${item.tahun}</td>
-                        <td class="text-end">Rp ${formatRupiah(item.harga)}</td>
-                        <td class="text-center">${masaManfaat} Thn</td>
-                        <td class="text-end text-danger">(Rp ${formatRupiah(susutThn)})</td>
-                        <td class="text-end fw-bold text-success">Rp ${formatRupiah(nilaiSisa)}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('neraca-aset-tetap').innerText = formatRupiah(totalNilaiSisa);
-            document.getElementById('ak-investasi').innerText = "(Rp " + formatRupiah(totalNilaiSisa) + ")";
-            document.getElementById('ak-kas-bersih-inv').innerText = "(Rp " + formatRupiah(totalNilaiSisa) + ")";
+            tbody.innerHTML = htmlString;
         }
 
-        function bukaModalTambahModal() {
-            let modal = new bootstrap.Modal(document.getElementById('modalTambahModal'));
-            modal.show();
-        }
+        function bukaModalTambahModal() { new bootstrap.Modal(document.getElementById('modalTambahModal')).show(); }
 
         async function simpanModalDesaBaru(e) {
             e.preventDefault();
@@ -3057,17 +2844,10 @@
             let sumber = document.getElementById('add-sumber-modal').value;
             let nominal = ambilAngka(document.getElementById('add-nominal-modal').value);
 
-            await db.collection("modals").add({
-                tahun: tahun,
-                sumber: sumber,
-                nominal: nominal
-            });
-
+            await db.collection("modals").add({ tahun: tahun, sumber: sumber, nominal: nominal });
             catatLog('Penyertaan Modal', `Setor modal desa tahun ${tahun} sejumlah Rp ${formatRupiah(nominal)}`);
-
             bootstrap.Modal.getInstance(document.getElementById('modalTambahModal')).hide();
-            e.target.reset();
-            Toast.fire({ icon: 'success', title: 'Penyertaan modal desa berhasil disimpan!' });
+            e.target.reset(); Toast.fire({ icon: 'success', title: 'Penyertaan modal desa disimpan!' });
         }
 
         function renderHistoriModal() {
@@ -3075,13 +2855,13 @@
             if (!tbody) return;
 
             let totalModal = 0;
+            let htmlString = '';
             if (historiModalData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Belum ada riwayat penyertaan modal.</td></tr>`;
+                htmlString = `<tr><td colspan="4" class="text-center text-muted py-3">Belum ada riwayat penyertaan modal.</td></tr>`;
             } else {
-                tbody.innerHTML = '';
                 historiModalData.forEach(item => {
                     totalModal += item.nominal;
-                    tbody.innerHTML += `
+                    htmlString += `
                         <tr>
                             <td>${escapeHtml(item.tahun)}</td>
                             <td>APBDes ${escapeHtml(item.tahun)}</td>
@@ -3091,6 +2871,7 @@
                     `;
                 });
             }
+            tbody.innerHTML = htmlString;
 
             document.getElementById('val-total-modal-desa').innerText = "Rp " + formatRupiah(totalModal);
             document.getElementById('neraca-modal-disetor').innerText = formatRupiah(totalModal);
@@ -3123,267 +2904,155 @@
             let listContainer = document.getElementById('list-simulasi-pades');
             if (!listContainer) return;
 
-            listContainer.innerHTML = '';
+            let htmlString = '';
             let warnaArray = ['text-success', 'text-primary', 'text-warning', 'text-info', 'text-danger', 'text-secondary'];
 
             padesConfigList.forEach((item, index) => {
                 let warnaClass = item.warna || warnaArray[index % warnaArray.length];
                 let nilaiAlokasi = labaBersih > 0 ? labaBersih * (item.persen / 100) : 0;
-
-                listContainer.innerHTML += `
+                htmlString += `
                     <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                         <span>${escapeHtml(item.ket)} - ${item.persen}%:</span>
                         <span class="${warnaClass}">Rp ${formatRupiah(nilaiAlokasi)}</span>
                     </li>
                 `;
             });
+            listContainer.innerHTML = htmlString;
         }
 
         function bukaModalEditPADes() {
             let container = document.getElementById('container-dynamic-pades');
-            container.innerHTML = '';
-
+            let htmlString = '';
             padesConfigList.forEach((item, index) => {
-                container.innerHTML += `
+                htmlString += `
                     <div class="row g-2 align-items-center p-2 border rounded-3 bg-light row-pades-item">
-                        <div class="col-7">
-                            <input type="text" class="form-control form-control-sm pades-ket" value="${escapeHtml(item.ket)}" placeholder="Nama Alokasi" required>
-                        </div>
+                        <div class="col-7"><input type="text" class="form-control form-control-sm pades-ket" value="${escapeHtml(item.ket)}" required></div>
                         <div class="col-3">
                             <div class="input-group input-group-sm">
                                 <input type="number" class="form-control pades-persen" value="${item.persen}" min="0" max="100" required>
                                 <span class="input-group-text">%</span>
                             </div>
                         </div>
-                        <div class="col-2 text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="hapusBarisPades(this)"><i class="fas fa-trash"></i></button>
-                        </div>
+                        <div class="col-2 text-center"><button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="hapusBarisPades(this)"><i class="fas fa-trash"></i></button></div>
                     </div>
                 `;
             });
-
-            let modal = new bootstrap.Modal(document.getElementById('modalEditPADes'));
-            modal.show();
+            container.innerHTML = htmlString;
+            new bootstrap.Modal(document.getElementById('modalEditPADes')).show();
         }
 
         function tambahBarisPades() {
             let container = document.getElementById('container-dynamic-pades');
             let div = document.createElement('div');
             div.className = "row g-2 align-items-center p-2 border rounded-3 bg-light row-pades-item";
-            div.innerHTML = `
-                <div class="col-7">
-                    <input type="text" class="form-control form-control-sm pades-ket" placeholder="Nama Alokasi Baru" autocomplete="off" required>
-                </div>
-                <div class="col-3">
-                    <div class="input-group input-group-sm">
-                        <input type="number" class="form-control pades-persen" value="0" min="0" max="100" required>
-                        <span class="input-group-text">%</span>
-                    </div>
-                </div>
-                <div class="col-2 text-center">
-                    <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="hapusBarisPades(this)"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
+            div.innerHTML = `<div class="col-7"><input type="text" class="form-control form-control-sm pades-ket" placeholder="Alokasi Baru" required></div><div class="col-3"><div class="input-group input-group-sm"><input type="number" class="form-control pades-persen" value="0" min="0" max="100" required><span class="input-group-text">%</span></div></div><div class="col-2 text-center"><button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="hapusBarisPades(this)"><i class="fas fa-trash"></i></button></div>`;
             container.appendChild(div);
         }
 
         function hapusBarisPades(btn) {
             let row = btn.closest('.row-pades-item');
-            if (document.querySelectorAll('.row-pades-item').length > 1) {
-                row.remove();
-            } else {
-                Toast.fire({ icon: 'warning', title: 'Minimal harus ada 1 alokasi PADes!' });
-            }
+            if (document.querySelectorAll('.row-pades-item').length > 1) row.remove();
+            else Toast.fire({ icon: 'warning', title: 'Minimal harus ada 1 alokasi PADes!' });
         }
 
         function simpanConfigPADesDinamis(e) {
             e.preventDefault();
             let rows = document.querySelectorAll('.row-pades-item');
-            let newList = [];
-            let totalPersen = 0;
+            let newList = [], totalPersen = 0;
 
-            rows.forEach((r, idx) => {
+            rows.forEach((r) => {
                 let ket = r.querySelector('.pades-ket').value;
                 let persen = parseFloat(r.querySelector('.pades-persen').value) || 0;
-                totalPersen += persen;
-                newList.push({ ket, persen });
+                totalPersen += persen; newList.push({ ket, persen });
             });
 
-            if (totalPersen !== 100) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Total Persen Harus 100%',
-                    text: `Total alokasi saat ini adalah ${totalPersen}%. Harap sesuaikan kembali agar tepat 100%.`
-                });
-                return;
-            }
+            if (totalPersen !== 100) { Swal.fire({ icon: 'warning', title: 'Total Persen Harus 100%', text: `Total saat ini: ${totalPersen}%.` }); return; }
 
             padesConfigList = newList;
             localStorage.setItem('siak_pades_list', JSON.stringify(padesConfigList));
-
-            let labaBersih = ambilAngka(document.getElementById('laba-bersih').innerText);
-            hitungEstimasiPADes(labaBersih);
-
-            catatLog('Pengaturan PADes', 'Konfigurasi alokasi PADes dinamis diperbarui.');
+            hitungEstimasiPADes(ambilAngka(document.getElementById('laba-bersih').innerText));
+            catatLog('Pengaturan PADes', 'Konfigurasi PADes dinamis diperbarui.');
             bootstrap.Modal.getInstance(document.getElementById('modalEditPADes')).hide();
             Toast.fire({ icon: 'success', title: 'Alokasi PADes berhasil diperbarui!' });
         }
 
         function backupDatabaseJSON() {
-            let dataBackup = JSON.stringify({
-                jurnal: riwayatJurnal,
-                units: unitUsahaData,
-                akses: aksesUnitData,
-                asets: asetTetapData,
-                modals: historiModalData,
-                profil: profilBUMDes,
-                padesList: padesConfigList,
-                users: userAccounts,
-                logs: logAktivitasData
-            }, null, 2);
-
+            let dataBackup = JSON.stringify({ jurnal: riwayatJurnal, units: unitUsahaData, akses: aksesUnitData, asets: asetTetapData, modals: historiModalData, profil: profilBUMDes, padesList: padesConfigList, users: userAccounts, logs: logAktivitasData }, null, 2);
             let blob = new Blob([dataBackup], { type: 'application/json' });
-            let link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            
-            let skrg = new Date();
-            let tglStr = String(skrg.getDate()).padStart(2, '0') + '-' + String(skrg.getMonth() + 1).padStart(2, '0') + '-' + skrg.getFullYear();
-            
+            let link = document.createElement('a'); link.href = URL.createObjectURL(blob);
+            let tglStr = new Date().toISOString().slice(0, 10);
             link.download = `Backup_SIAK_BUMDes_${tglStr}.json`;
-            link.click();
-            catatLog('Backup Data', `Export cadangan database JSON berhasil diunduh.`);
+            link.click(); catatLog('Backup Data', `Export JSON diunduh.`);
         }
 
         function restoreDatabaseJSON() {
             let fileInput = document.getElementById('file-restore-json');
-            if (!fileInput.files.length) {
-                Toast.fire({ icon: 'warning', title: 'Pilih file JSON cadangan terlebih dahulu!' });
-                return;
-            }
+            if (!fileInput.files.length) { Toast.fire({ icon: 'warning', title: 'Pilih file JSON!' }); return; }
 
             let reader = new FileReader();
             reader.onload = async function(e) {
                 try {
                     let dataParsed = JSON.parse(e.target.result);
-                    
-                    if (dataParsed.units) {
-                        for (let unit of dataParsed.units) {
-                             await db.collection("units").doc(unit.id.toString()).set(unit);
-                        }
-                    }
-                    if (dataParsed.akses && dataParsed.users) {
-                        await db.collection("settings").doc("hak_akses").set({
-                            users: dataParsed.users,
-                            akses: dataParsed.akses
-                        });
-                    }
-
+                    if (dataParsed.units) for (let unit of dataParsed.units) await db.collection("units").doc(unit.id.toString()).set(unit);
+                    if (dataParsed.akses && dataParsed.users) await db.collection("settings").doc("hak_akses").set({ users: dataParsed.users, akses: dataParsed.akses });
                     if (dataParsed.jurnal) {
-                        for (let j of dataParsed.jurnal) {
-                            await db.collection("jurnal").add(j);
-                        }
-                        Swal.fire('Berhasil!', 'Seluruh data sistem berhasil dipulihkan ke Cloud Firebase!', 'success');
-                        setTimeout(() => location.reload(), 1500); 
-                    } else {
-                        Swal.fire('Gagal', 'Format file JSON tidak sesuai!', 'error');
-                    }
-                } catch (err) {
-                    Swal.fire('Error', 'Gagal membaca file JSON!', 'error');
-                }
+                        for (let j of dataParsed.jurnal) await db.collection("jurnal").add(j);
+                        Swal.fire('Berhasil!', 'Data dipulihkan!', 'success'); setTimeout(() => location.reload(), 1500); 
+                    } else { Swal.fire('Gagal', 'Format JSON salah!', 'error'); }
+                } catch (err) { Swal.fire('Error', 'Gagal membaca JSON!', 'error'); }
             };
             reader.readAsText(fileInput.files[0]);
         }
 
         async function resetDatabase() {
             Swal.fire({
-                title: 'Reset Seluruh Database?',
-                text: "Apakah kamu yakin ingin menghapus seluruh riwayat data? Tindakan ini tidak bisa dibatalkan!",
-                icon: 'error',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, Hapus Semua!',
-                cancelButtonText: 'Batal'
+                title: 'Reset Database?', text: "Semua riwayat akan dihapus permanen!", icon: 'error',
+                showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus Semua!'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     let snapshot = await db.collection("jurnal").get();
                     snapshot.forEach(doc => doc.ref.delete());
-                    Swal.fire('Direset!', 'Seluruh data transaksi jurnal berhasil dihapus.', 'success');
+                    Swal.fire('Direset!', 'Seluruh data jurnal dihapus.', 'success');
                 }
             });
         }
 
         function eksporJurnalKeCSV() {
-            let dataExport = riwayatJurnal;
-            
-            if (currentUser && currentUser.role !== 'Super Admin') {
-                dataExport = riwayatJurnal.filter(item => item.unitUsaha === currentUser.unit);
-            }
+            let dataExport = (currentUser && currentUser.role !== 'Super Admin') ? riwayatJurnal.filter(item => item.unitUsaha === currentUser.unit) : riwayatJurnal;
+            if (dataExport.length === 0) { Toast.fire({ icon: 'warning', title: 'Tidak ada data!' }); return; }
 
-            if (dataExport.length === 0) {
-                Toast.fire({ icon: 'warning', title: 'Belum ada data jurnal untuk diunduh!' });
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,Tanggal,Unit Usaha,Keterangan Transaksi,No. Akun,Nama Akun,Debit (Pemasukan),Kredit (Pengeluaran)\n";
+            let csvContent = "data:text/csv;charset=utf-8,Tanggal,Unit Usaha,Keterangan,No. Akun,Nama Akun,Debit (Pemasukan),Kredit (Pengeluaran)\n";
             dataExport.forEach(item => {
                 let akunLawan = getAkunInfo(item.namaKategori);
-                let tanggalStr = formatTanggalIndo(item.tanggal);
-                
-                let valDebit = akunLawan.arus === 'Pemasukan' ? item.nominal : 0;
-                let valKredit = akunLawan.arus === 'Pengeluaran' ? item.nominal : 0;
-                
-                csvContent += `"${tanggalStr}","${item.unitUsaha}","${item.keterangan}","${akunLawan.no}","${akunLawan.nama}","${valDebit}","${valKredit}"\n`;
+                let vD = akunLawan.arus === 'Pemasukan' ? item.nominal : 0;
+                let vK = akunLawan.arus === 'Pengeluaran' ? item.nominal : 0;
+                csvContent += `"${formatTanggalIndo(item.tanggal)}","${item.unitUsaha}","${item.keterangan}","${akunLawan.no}","${akunLawan.nama}","${vD}","${vK}"\n`;
             });
 
-            let encodedUri = encodeURI(csvContent);
-            let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Jurnal_Umum_BUMDes.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            catatLog('Export Jurnal', `Ekspor data jurnal umum ke format CSV berhasil.`);
+            let link = document.createElement("a"); link.href = encodeURI(csvContent); link.download = "Jurnal_BUMDes.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            catatLog('Export Jurnal', `Ekspor CSV berhasil.`);
         }
 
         function bukaModalEditAkses(id) {
             let unitItem = unitUsahaData.find(u => u.id == id);
             if (!unitItem) return;
-
-            let akses = aksesUnitData.find(a => a.id == unitItem.id || a.unit === unitItem.nama) || {
-                id: unitItem.id,
-                unit: unitItem.nama,
-                pengelola: unitItem.pengelola,
-                username: `unit_${unitItem.id}`,
-                izin: 'Akses Penuh Input & Edit',
-                status: 'Aktif'
-            };
-
-            let userAcc = userAccounts.find(u => u.unit === unitItem.nama);
+            let akses = aksesUnitData.find(a => a.id == id || a.unit === unitItem.nama) || { username: `unit_${id}`, izin: 'Akses Penuh Input & Edit', status: 'Aktif' };
 
             document.getElementById('edit-akses-id').value = unitItem.id;
             document.getElementById('edit-username').value = akses.username;
-            document.getElementById('edit-password').value = userAcc ? userAcc.pass : '';
+            document.getElementById('edit-password').value = ''; // Do not show hash
             document.getElementById('edit-izin').value = akses.izin;
             document.getElementById('edit-status').value = akses.status;
-            
             document.getElementById('modalAksesTitle').innerText = `Perizinan & Akun - ${unitItem.nama}`;
-
-            let modal = new bootstrap.Modal(document.getElementById('modalEditAkses'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('modalEditAkses')).show();
         }
 
-        function simpanEditAkses(event) {
+        async function simpanEditAkses(event) {
             event.preventDefault();
             let id = document.getElementById('edit-akses-id').value;
             let unitItem = unitUsahaData.find(u => u.id == id);
-            if (!unitItem) return;
-
-            let akses = aksesUnitData.find(a => a.id == unitItem.id || a.unit === unitItem.nama);
-            if (!akses) {
-                akses = { id: unitItem.id, unit: unitItem.nama, pengelola: unitItem.pengelola };
-                aksesUnitData.push(akses);
-            }
+            let akses = aksesUnitData.find(a => a.id == id || a.unit === unitItem.nama);
+            if (!akses) { akses = { id: unitItem.id, unit: unitItem.nama, pengelola: unitItem.pengelola }; aksesUnitData.push(akses); }
 
             let newUsername = document.getElementById('edit-username').value;
             let newPassword = document.getElementById('edit-password').value;
@@ -3395,189 +3064,111 @@
             let userAcc = userAccounts.find(u => u.unit === unitItem.nama);
             if (userAcc) {
                 userAcc.username = newUsername;
-                userAcc.pass = newPassword;
+                if(newPassword) userAcc.pass = await hashString(newPassword); // SECURITY UPDATE
             } else {
-                userAccounts.push({
-                    username: newUsername,
-                    pass: newPassword,
-                    role: 'Pengelola Unit',
-                    unit: unitItem.nama,
-                    name: unitItem.pengelola
-                });
+                let pass = newPassword ? await hashString(newPassword) : await hashString('12345');
+                userAccounts.push({ username: newUsername, pass: pass, role: 'Pengelola Unit', unit: unitItem.nama, name: unitItem.pengelola });
             }
 
-            db.collection("settings").doc("hak_akses").set({
-                users: userAccounts,
-                akses: aksesUnitData
-            }).then(() => {
-                renderAksesUnitTable();
-                catatLog('Perizinan Akun', `Kredensial dan perizinan unit '${unitItem.nama}' telah diperbarui.`);
-
-                let modalElement = document.getElementById('modalEditAkses');
-                let modalInstance = bootstrap.Modal.getInstance(modalElement);
-                if (modalInstance) modalInstance.hide();
-                
-                Toast.fire({ icon: 'success', title: `Akun & perizinan unit ${unitItem.nama} diperbarui di Cloud!` });
-            }).catch(err => {
-                Swal.fire('Error', 'Gagal menyimpan perubahan ke server.', 'error');
+            db.collection("settings").doc("hak_akses").set({ users: userAccounts, akses: aksesUnitData }).then(() => {
+                renderAksesUnitTable(); catatLog('Perizinan Akun', `Akun unit '${unitItem.nama}' diperbarui.`);
+                bootstrap.Modal.getInstance(document.getElementById('modalEditAkses')).hide();
+                Toast.fire({ icon: 'success', title: `Akun diperbarui!` });
             });
         }
 
         function bukaModalEdit(id) {
             let unit = unitUsahaData.find(u => u.id == id);
             if (!unit) return;
-
             document.getElementById('edit-unit-id').value = unit.id;
             document.getElementById('edit-nama-pengelola').value = unit.pengelola;
             document.getElementById('edit-jabatan-pengelola').value = unit.jabatan;
             document.getElementById('modalTitle').innerText = `Edit Pengelola - ${unit.nama}`;
-
-            let modal = new bootstrap.Modal(document.getElementById('modalEditPengelola'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('modalEditPengelola')).show();
         }
 
         async function simpanEditPengelola(event) {
             event.preventDefault();
             let id = document.getElementById('edit-unit-id').value;
-            
             let namaBaru = document.getElementById('edit-nama-pengelola').value;
             let jabatanBaru = document.getElementById('edit-jabatan-pengelola').value;
 
-            await db.collection("units").doc(id.toString()).update({
-                pengelola: namaBaru,
-                jabatan: jabatanBaru
-            });
+            await db.collection("units").doc(id.toString()).update({ pengelola: namaBaru, jabatan: jabatanBaru });
 
             let unitItem = unitUsahaData.find(u => u.id == id);
             if (unitItem) {
                 let akses = aksesUnitData.find(a => a.id == id || a.unit === unitItem.nama);
                 if (akses) akses.pengelola = namaBaru;
-
                 let userAcc = userAccounts.find(u => u.unit === unitItem.nama);
                 if (userAcc) userAcc.name = namaBaru;
-
-                await db.collection("settings").doc("hak_akses").set({
-                    users: userAccounts,
-                    akses: aksesUnitData
-                });
+                await db.collection("settings").doc("hak_akses").set({ users: userAccounts, akses: aksesUnitData });
             }
-
-            catatLog('Pengelola Unit', `Data pengelola unit diubah menjadi '${namaBaru}'.`);
-
-            let modalElement = document.getElementById('modalEditPengelola');
-            let modalInstance = bootstrap.Modal.getInstance(modalElement);
-            if (modalInstance) modalInstance.hide();
-
-            Toast.fire({ icon: 'success', title: `Pengelola berhasil diperbarui di Cloud!` });
+            bootstrap.Modal.getInstance(document.getElementById('modalEditPengelola')).hide();
+            Toast.fire({ icon: 'success', title: `Pengelola diperbarui!` });
         }
 
-        let pendingTabId = null;
-        let pendingTombol = null;
+        let pendingTabId = null, pendingTombol = null;
 
         function bukaTab(idTab, tombol) {
-            let menuKhususAdmin = [
-                'tab-unit-usaha', 'tab-akses-unit', 'tab-bukubesar', 'tab-neraca-saldo', 
-                'tab-aset', 'tab-modal-pades', 'tab-labarugi', 'tab-neraca', 'tab-aruskas', 
-                'tab-calk', 'tab-rasio', 'tab-audit-tahunan', 'tab-log-aktivitas', 
-                'tab-profil-bumdes', 'tab-pengaturan', 'tab-lpj'
-            ];
+            let menuKhususAdmin = ['tab-unit-usaha', 'tab-akses-unit', 'tab-bukubesar', 'tab-neraca-saldo', 'tab-aset', 'tab-modal-pades', 'tab-labarugi', 'tab-neraca', 'tab-aruskas', 'tab-calk', 'tab-rasio', 'tab-audit-tahunan', 'tab-log-aktivitas', 'tab-profil-bumdes', 'tab-pengaturan', 'tab-lpj'];
 
             if (currentUser && currentUser.role !== 'Super Admin' && menuKhususAdmin.includes(idTab)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Ditolak',
-                    text: 'Akun Unit hanya diizinkan mengakses Ringkasan, Input Transaksi, dan Jurnal Umum.'
-                });
-                return;
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Hanya diizinkan mengakses Ringkasan, Input, dan Jurnal.' }); return;
             }
 
             let menuTerkunci = ['tab-profil-bumdes', 'tab-unit-usaha', 'tab-akses-unit'];
-
-            if (!tombol) {
-                let keyClass = idTab.replace('tab-', '');
-                tombol = document.querySelector(`.sidebar-menu .btn-nav-${keyClass}`);
-            }
+            if (!tombol) { let keyClass = idTab.replace('tab-', ''); tombol = document.querySelector(`.sidebar-menu .btn-nav-${keyClass}`); }
 
             if (menuTerkunci.includes(idTab)) {
-                pendingTabId = idTab;
-                pendingTombol = tombol;
+                pendingTabId = idTab; pendingTombol = tombol;
                 document.getElementById('input-pin-akses').value = '';
-                let modalPin = new bootstrap.Modal(document.getElementById('modalPinAkses'));
-                modalPin.show();
-                return;
+                new bootstrap.Modal(document.getElementById('modalPinAkses')).show(); return;
             }
-
             tampilkanTab(idTab, tombol);
         }
 
-        function verifikasiPinAkses() {
+        async function verifikasiPinAkses() {
             let pinInput = document.getElementById('input-pin-akses').value.trim();
-            let pinBenar = profilBUMDes.kodeAkses || '1234';
-
-            if (pinInput === pinBenar) {
-                let modalElem = document.getElementById('modalPinAkses');
-                let modalInstance = bootstrap.Modal.getInstance(modalElem);
-                if (modalInstance) modalInstance.hide();
-
-                if (pendingTabId) {
-                    tampilkanTab(pendingTabId, pendingTombol);
-                    pendingTabId = null;
-                    pendingTombol = null;
-                }
+            let hashedInput = await hashString(pinInput);
+            
+            // Check against hashed PIN, or fallback to plain text for migration 
+            if (hashedInput === profilBUMDes.kodeAkses || pinInput === profilBUMDes.kodeAkses) {
+                bootstrap.Modal.getInstance(document.getElementById('modalPinAkses')).hide();
+                if (pendingTabId) { tampilkanTab(pendingTabId, pendingTombol); pendingTabId = null; pendingTombol = null; }
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Ditolak',
-                    text: 'Kode PIN yang kamu masukkan salah.'
-                });
-                catatLog('Keamanan', `Upaya membuka menu terkunci (${pendingTabId}) gagal karena PIN salah.`);
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Kode PIN salah.' });
+                catatLog('Keamanan', `Upaya membuka menu terkunci (${pendingTabId}) gagal (PIN salah).`);
             }
         }
 
         function tampilkanTab(idTab, tombol) {
             document.querySelectorAll('.konten-tab').forEach(tab => tab.style.display = 'none');
             document.querySelectorAll('.sidebar-menu button').forEach(btn => btn.classList.remove('active'));
-
-            let elemTarget = document.getElementById(idTab);
-            if (elemTarget) elemTarget.style.display = 'block';
-
+            let elemTarget = document.getElementById(idTab); if (elemTarget) elemTarget.style.display = 'block';
             if (tombol) tombol.classList.add('active');
-
             let judulTxt = tombol ? tombol.innerText.trim() : 'Dashboard';
             document.getElementById('judul-halaman').innerText = judulTxt;
-
-            if (window.innerWidth <= 991) {
-                document.getElementById('sidebar').classList.remove('show-sidebar');
-            }
+            if (window.innerWidth <= 991) document.getElementById('sidebar').classList.remove('show-sidebar');
         }
 
         function bukaTabMobile(idTab, tombol) {
             document.querySelectorAll('.mobile-bottom-nav button').forEach(btn => btn.classList.remove('active'));
             tombol.classList.add('active');
-
             let keyClass = idTab.replace('tab-', '');
             let sidebarBtn = document.querySelector(`.sidebar-menu .btn-nav-${keyClass}`);
             bukaTab(idTab, sidebarBtn || tombol);
         }
 
         function hitungLabaRugi() {
-            let totalPendapatanOp = 0, totalPendapatanNon = 0;
-            let totalBebanOp = 0, totalBebanNon = 0;
-            let totalPiutang = 0, totalHutang = 0;
-            let totalKasLalu = 0;
-
+            let totalPendapatanOp = 0, totalPendapatanNon = 0, totalBebanOp = 0, totalBebanNon = 0, totalPiutang = 0, totalHutang = 0, totalKasLalu = 0;
             let filterSelect = document.querySelector('.filter-laporan-unit');
             let unitTerpilih = filterSelect ? filterSelect.value : 'Semua';
 
-            let dataFiltered = riwayatJurnal;
-            let asetsFiltered = asetTetapData;
-
+            let dataFiltered = riwayatJurnal; let asetsFiltered = asetTetapData;
             if (currentUser && currentUser.role !== 'Super Admin') {
-                dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === currentUser.unit);
-                asetsFiltered = asetTetapData.filter(a => a.unit === currentUser.unit);
+                dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === currentUser.unit); asetsFiltered = asetTetapData.filter(a => a.unit === currentUser.unit);
             } else if (unitTerpilih !== 'Semua') {
-                dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === unitTerpilih);
-                asetsFiltered = asetTetapData.filter(a => a.unit === unitTerpilih);
+                dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === unitTerpilih); asetsFiltered = asetTetapData.filter(a => a.unit === unitTerpilih);
             }
 
             dataFiltered.forEach(item => {
@@ -3591,25 +3182,18 @@
             });
 
             let totalPenyusutanAset = 0;
-            asetsFiltered.forEach(aset => {
-                let masaManfaat = aset.masaManfaat || 4;
-                let susutThn = aset.susutPerTahun || Math.round(aset.harga / masaManfaat);
-                totalPenyusutanAset += susutThn;
-            });
-
+            asetsFiltered.forEach(aset => { totalPenyusutanAset += (aset.susutPerTahun || Math.round(aset.harga / (aset.masaManfaat || 4))); });
             totalBebanOp += totalPenyusutanAset;
 
             let totalPendapatan = totalPendapatanOp + totalPendapatanNon;
             let totalBeban = totalBebanOp + totalBebanNon;
             let labaBersih = totalPendapatan - totalBeban;
-
             let totalModalDesa = historiModalData.reduce((acc, curr) => acc + (curr.nominal || 0), 0);
             let totalKas = totalKasLalu + totalModalDesa + labaBersih;
 
             document.getElementById('total-pendapatan-op').innerText = "Rp " + formatRupiah(totalPendapatanOp);
             document.getElementById('total-pendapatan-non').innerText = "Rp " + formatRupiah(totalPendapatanNon);
             document.getElementById('total-pendapatan').innerText = "Rp " + formatRupiah(totalPendapatan);
-
             document.getElementById('total-beban-op').innerText = "(Rp " + formatRupiah(totalBebanOp) + ")";
             document.getElementById('total-beban-non').innerText = "(Rp " + formatRupiah(totalBebanNon) + ")";
             document.getElementById('total-beban').innerText = "(Rp " + formatRupiah(totalBeban) + ")";
@@ -3630,14 +3214,11 @@
             document.getElementById('ak-kas-bersih-op').innerText = "Rp " + formatRupiah(labaBersih);
             document.getElementById('ak-saldo-akhir').innerText = "Rp " + formatRupiah(totalKas);
 
-            hitungEstimasiPADes(labaBersih);
-            buatGrafik();
-            hitungNeraca(); 
+            hitungEstimasiPADes(labaBersih); buatGrafik(); hitungNeraca(); 
         }
 
         function hitungNeraca() {
             let totalAset = 0, totalPasiva = 0;
-
             document.querySelectorAll('.nilai-aset').forEach(el => totalAset += ambilAngka(el.innerText));
             document.querySelectorAll('.nilai-pasiva').forEach(el => totalPasiva += ambilAngka(el.innerText));
 
@@ -3651,16 +3232,10 @@
 
         async function tambahTransaksi(event) {
             event.preventDefault();
-
             let unitUsaha = document.getElementById('input-unit-usaha').value;
             let tanggal = document.getElementById('input-tanggal').value;
             let kategori = document.getElementById('input-kategori').value;
-            
-            let keterangan = document.getElementById('input-keterangan').value;
-            if (keterangan === 'Lainnya') {
-                keterangan = document.getElementById('input-keterangan-manual').value;
-            }
-
+            let keterangan = document.getElementById('input-keterangan').value === 'Lainnya' ? document.getElementById('input-keterangan-manual').value : document.getElementById('input-keterangan').value;
             let nominal = ambilAngka(document.getElementById('input-nominal').value);
 
             let namaKategori = 'Pendapatan Operasional';
@@ -3672,60 +3247,33 @@
             else if (kategori === 'nilai-hutang') namaKategori = 'Hutang Usaha';
             else if (kategori === 'nilai-kas-lalu') namaKategori = 'Kas Tahun Sebelumnya';
 
-            await db.collection("jurnal").add({
-                tanggal: tanggal,
-                unitUsaha: unitUsaha,
-                keterangan: keterangan,
-                namaKategori: namaKategori,
-                nominal: nominal
-            });
-
+            await db.collection("jurnal").add({ tanggal: tanggal, unitUsaha: unitUsaha, keterangan: keterangan, namaKategori: namaKategori, nominal: nominal });
             catatLog('Input Transaksi', `Tambah transaksi '${keterangan}' nominal Rp ${formatRupiah(nominal)} untuk ${unitUsaha}`);
 
-            document.getElementById('form-transaksi').reset();
-            ubahTampilanKeterangan(); 
-            
-            let inputTanggal = document.getElementById('input-tanggal');
-            if (inputTanggal) inputTanggal.value = new Date().toISOString().slice(0, 10);
-
+            document.getElementById('form-transaksi').reset(); ubahTampilanKeterangan(); 
+            document.getElementById('input-tanggal').value = new Date().toISOString().slice(0, 10);
             Toast.fire({ icon: 'success', title: 'Transaksi berhasil disimpan!' });
         }
 
         function buatGrafik() {
             const ctx = document.getElementById('grafikKeuangan');
             if (!ctx) return;
-
-            let rekapBulanPendapatan = Array(12).fill(0);
-            let rekapBulanBeban = Array(12).fill(0);
-
-            let filterSelect = document.querySelector('.filter-laporan-unit');
-            let unitTerpilih = filterSelect ? filterSelect.value : 'Semua';
-
-            let dataFiltered = riwayatJurnal;
-            if (currentUser && currentUser.role !== 'Super Admin') {
-                dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === currentUser.unit);
-            } else if (unitTerpilih !== 'Semua') {
-                dataFiltered = riwayatJurnal.filter(item => item.unitUsaha === unitTerpilih);
-            }
+            let rekapBulanPendapatan = Array(12).fill(0), rekapBulanBeban = Array(12).fill(0);
+            let unitTerpilih = document.querySelector('.filter-laporan-unit') ? document.querySelector('.filter-laporan-unit').value : 'Semua';
+            let dataFiltered = (currentUser && currentUser.role !== 'Super Admin') ? riwayatJurnal.filter(i => i.unitUsaha === currentUser.unit) : (unitTerpilih !== 'Semua' ? riwayatJurnal.filter(i => i.unitUsaha === unitTerpilih) : riwayatJurnal);
 
             dataFiltered.forEach(item => {
                 if (item.tanggal) {
-                    let dateObj = new Date(item.tanggal);
-                    if (!isNaN(dateObj.getTime())) {
-                        let bulanIndex = dateObj.getMonth();
-                        if (item.namaKategori.includes('Pendapatan')) {
-                            rekapBulanPendapatan[bulanIndex] += item.nominal;
-                        } else if (item.namaKategori.includes('Beban')) {
-                            rekapBulanBeban[bulanIndex] += item.nominal;
-                        }
+                    let d = new Date(item.tanggal);
+                    if (!isNaN(d.getTime())) {
+                        let bln = d.getMonth();
+                        if (item.namaKategori.includes('Pendapatan')) rekapBulanPendapatan[bln] += item.nominal;
+                        else if (item.namaKategori.includes('Beban')) rekapBulanBeban[bln] += item.nominal;
                     }
                 }
             });
 
-            if (chartKeuanganInstance) {
-                chartKeuanganInstance.destroy();
-            }
-
+            if (chartKeuanganInstance) chartKeuanganInstance.destroy();
             chartKeuanganInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -3739,54 +3287,29 @@
             });
         }
 
-        // ================= FITUR UPZIS: BACKUP EXCEL & CSV (Poin 9) =================
         function backupDataExcelCSV(format) {
-            let skrg = new Date();
-            let tglStr = String(skrg.getDate()).padStart(2, '0') + '-' + String(skrg.getMonth() + 1).padStart(2, '0') + '-' + skrg.getFullYear();
-            
+            let skrg = new Date(); let tglStr = String(skrg.getDate()).padStart(2, '0') + '-' + String(skrg.getMonth() + 1).padStart(2, '0') + '-' + skrg.getFullYear();
             if (format === 'excel') {
                 let wb = XLSX.utils.book_new();
-                
-                let wsTrx = XLSX.utils.json_to_sheet(riwayatJurnal.map(t => ({
-                    "ID_Cloud": t.docId, "Tanggal": t.tanggal, "Unit_Usaha": t.unitUsaha,
-                    "Kategori": t.namaKategori, "Keterangan": t.keterangan, "Nominal": t.nominal
-                })));
+                let wsTrx = XLSX.utils.json_to_sheet(riwayatJurnal.map(t => ({ "ID_Cloud": t.docId, "Tanggal": t.tanggal, "Unit_Usaha": t.unitUsaha, "Kategori": t.namaKategori, "Keterangan": t.keterangan, "Nominal": t.nominal })));
                 XLSX.utils.book_append_sheet(wb, wsTrx, "Buku_Jurnal");
-                
-                let wsAset = XLSX.utils.json_to_sheet(asetTetapData.map(a => ({
-                    "Nama_Aset": a.nama, "Unit": a.unit, "Tahun": a.tahun, 
-                    "Harga_Beli": a.harga, "Masa_Manfaat": a.masaManfaat
-                })));
+                let wsAset = XLSX.utils.json_to_sheet(asetTetapData.map(a => ({ "Nama_Aset": a.nama, "Unit": a.unit, "Tahun": a.tahun, "Harga_Beli": a.harga, "Masa_Manfaat": a.masaManfaat })));
                 XLSX.utils.book_append_sheet(wb, wsAset, "Daftar_Aset");
-
                 XLSX.writeFile(wb, `Backup_Database_BUMDes_${tglStr}.xlsx`);
-                catatLog('Backup Data', `Export cadangan database format EXCEL berhasil diunduh.`);
-                Toast.fire({ icon: 'success', title: 'File Excel berhasil diunduh!' });
-
+                catatLog('Backup Data', `Export EXCEL berhasil.`); Toast.fire({ icon: 'success', title: 'File Excel diunduh!' });
             } else if (format === 'csv') {
-                let wsTrx = XLSX.utils.json_to_sheet(riwayatJurnal.map(t => ({
-                    "Tanggal": t.tanggal, "Unit_Usaha": t.unitUsaha, "Kategori": t.namaKategori, 
-                    "Keterangan": t.keterangan, "Nominal": t.nominal
-                })));
-                let csv = XLSX.utils.sheet_to_csv(wsTrx);
-                let blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
-                let link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.download = `Backup_Jurnal_BUMDes_${tglStr}.csv`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                catatLog('Backup Data', `Export cadangan database format CSV berhasil diunduh.`);
-                Toast.fire({ icon: 'success', title: 'File CSV berhasil diunduh!' });
+                let wsTrx = XLSX.utils.json_to_sheet(riwayatJurnal.map(t => ({ "Tanggal": t.tanggal, "Unit_Usaha": t.unitUsaha, "Kategori": t.namaKategori, "Keterangan": t.keterangan, "Nominal": t.nominal })));
+                let csv = XLSX.utils.sheet_to_csv(wsTrx); let blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+                let link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Backup_Jurnal_${tglStr}.csv`;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                catatLog('Backup Data', `Export CSV berhasil.`); Toast.fire({ icon: 'success', title: 'File CSV diunduh!' });
             }
         }
 
-        // ================= FITUR UPZIS: GENERATOR LPJ PROFESSIONAL =================
         function cetakLPJPDF() {
             let jenis = document.getElementById('lpj-periode-jenis').value;
             let tahun = document.getElementById('lpj-tahun').value;
-            let txtPeriode = "";
-            let startMonth = 1, endMonth = 12;
+            let txtPeriode = "", startMonth = 1, endMonth = 12;
 
             if (jenis === 'T1') { txtPeriode = "TRIWULAN I (JAN-MAR)"; endMonth = 3; }
             else if (jenis === 'T2') { txtPeriode = "TRIWULAN II (APR-JUN)"; startMonth = 4; endMonth = 6; }
@@ -3803,7 +3326,7 @@
             document.getElementById('lpj-ttd-kades').innerText = profilBUMDes.penasihat || 'Kepala Desa';
             document.getElementById('lpj-ttd-direktur').innerText = profilBUMDes.direktur || 'Direktur BUMDes';
             document.getElementById('lpj-logo-bumdes').src = profilBUMDes.foto || '1001578681.jpg';
-            document.getElementById('lpj-tgl-cetak').innerText = formatTanggalIndo(new Date().toISOString().slice(0, 10));
+            
             let tglCetak = formatTanggalIndo(new Date().toISOString().slice(0, 10));
             document.getElementById('lpj-tgl-cetak-pengesahan').innerText = tglCetak;
             document.getElementById('lpj-tgl-cetak-penutup').innerText = tglCetak;
@@ -3811,13 +3334,10 @@
             document.getElementById('lpj-ttd-kades-pengesahan').innerText = profilBUMDes.penasihat || 'Kepala Desa';
             document.getElementById('lpj-ttd-direktur-penutup').innerText = profilBUMDes.direktur || 'Direktur BUMDes';
             document.getElementById('lpj-ttd-kades-penutup').innerText = profilBUMDes.penasihat || 'Kepala Desa';
-            // Perhitungan Laba Rugi berdasarkan waktu filter
+
             let p_op = 0, p_non = 0, b_op = 0, b_non = 0;
             riwayatJurnal.forEach(item => {
-                let d = new Date(item.tanggal);
-                let b = d.getMonth() + 1;
-                let y = d.getFullYear();
-
+                let d = new Date(item.tanggal); let b = d.getMonth() + 1; let y = d.getFullYear();
                 if (y == tahun && b >= startMonth && b <= endMonth) {
                     if (item.namaKategori === 'Pendapatan Operasional') p_op += item.nominal;
                     else if (item.namaKategori === 'Pendapatan Non-Operasional') p_non += item.nominal;
@@ -3826,80 +3346,43 @@
                 }
             });
 
-            // Perhitungan Aset Sisa
             let totalNilaiSisa = 0;
             asetTetapData.forEach(item => {
-                let masaManfaat = item.masaManfaat || 4;
-                let susutThn = item.susutPerTahun || Math.round(item.harga / masaManfaat);
+                let susutThn = item.susutPerTahun || Math.round(item.harga / (item.masaManfaat || 4));
                 let usiaAset = Math.max(0, tahun - item.tahun);
-                let totalPenyusutan = Math.min(item.harga, usiaAset * susutThn);
-                totalNilaiSisa += Math.max(0, item.harga - totalPenyusutan);
+                totalNilaiSisa += Math.max(0, item.harga - Math.min(item.harga, usiaAset * susutThn));
             });
             
-            if (jenis === 'TAHUN') {
-                b_op += asetTetapData.reduce((acc, curr) => acc + (curr.susutPerTahun || 0), 0);
-            }
+            if (jenis === 'TAHUN') b_op += asetTetapData.reduce((acc, curr) => acc + (curr.susutPerTahun || 0), 0);
 
-            let t_pendapatan = p_op + p_non;
-            let t_beban = b_op + b_non;
-            let laba = t_pendapatan - t_beban;
+            let t_pendapatan = p_op + p_non; let t_beban = b_op + b_non; let laba = t_pendapatan - t_beban;
 
-            // Injeksi Angka
             document.getElementById('lpj-pendapatan-op').innerText = "Rp " + formatRupiah(p_op);
             document.getElementById('lpj-pendapatan-non').innerText = "Rp " + formatRupiah(p_non);
             document.getElementById('lpj-total-pendapatan').innerText = "Rp " + formatRupiah(t_pendapatan);
-            
             document.getElementById('lpj-beban-op').innerText = "(Rp " + formatRupiah(b_op) + ")";
             document.getElementById('lpj-beban-non').innerText = "(Rp " + formatRupiah(b_non) + ")";
             document.getElementById('lpj-total-beban').innerText = "(Rp " + formatRupiah(t_beban) + ")";
-            
             document.getElementById('lpj-laba-bersih').innerText = "Rp " + formatRupiah(laba);
-            
             document.getElementById('lpj-saldo-kas').innerText = document.getElementById('dash-kas-bank').innerText;
             document.getElementById('lpj-nilai-aset').innerText = "Rp " + formatRupiah(totalNilaiSisa);
 
             const element = document.getElementById('lpj-print-area');
-            const opt = {
-                margin: 0, 
-                filename: `LPJ_BUMDes_${jenis}_${tahun}.pdf`, 
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: [216, 356], orientation: 'portrait' } 
-            };
+            const opt = { margin: 0, filename: `LPJ_BUMDes_${jenis}_${tahun}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: [216, 356], orientation: 'portrait' } };
 
-            Swal.fire({
-                title: 'Menyusun LPJ...',
-                text: 'Harap tunggu, Sistem sedang merender PDF Kertas Legal...',
-                icon: 'info',
-                showConfirmButton: false,
-                timer: 2000
-            });
-
-            setTimeout(() => {
-                html2pdf().set(opt).from(element).save().then(() => {
-                    catatLog('Cetak Laporan', `Mengunduh dokumen LPJ Formal ${txtPeriode} Tahun ${tahun}`);
-                    Toast.fire({ icon: 'success', title: 'LPJ Resmi PDF berhasil diunduh!' });
-                });
-            }, 1000);
+            Swal.fire({ title: 'Menyusun LPJ...', text: 'Sistem merender PDF...', icon: 'info', showConfirmButton: false, timer: 2000 });
+            setTimeout(() => { html2pdf().set(opt).from(element).save().then(() => { catatLog('Cetak Laporan', `Unduh LPJ ${txtPeriode} ${tahun}`); Toast.fire({ icon: 'success', title: 'LPJ PDF diunduh!' }); }); }, 1000);
         }
 
-        // ================= FITUR UPZIS: PWA SERVICE WORKER (Poin 10) =================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((reg) => console.log('Sistem PWA (SIAK BUMDes) siap beroperasi.', reg))
-                    .catch((err) => console.log('PWA gagal dimuat.', err));
+                navigator.serviceWorker.register('./sw.js').then((reg) => console.log('PWA siap.')).catch((err) => console.log('PWA gagal.', err));
             });
         }
 
         window.onload = function() {
-            inisialisasiFirebaseRealtimeListeners();
-            renderProfilBUMDes(); 
-            inisialisasiSistemAkses();
-
-            document.querySelectorAll('.input-rupiah').forEach(inp => {
-                inp.addEventListener('input', formatInputRupiah);
-            });
+            inisialisasiFirebaseRealtimeListeners(); renderProfilBUMDes(); inisialisasiSistemAkses();
+            document.querySelectorAll('.input-rupiah').forEach(inp => { inp.addEventListener('input', formatInputRupiah); });
         };
     </script>
 </body>
