@@ -1361,100 +1361,140 @@
                     <div class="pdf-preview-wrapper d-none d-md-flex no-print">
                         <div id="lpj-print-area" class="lpj-page">
                             
-                            <!-- COVER LPJ -->
+                            <!-- 1. COVER LPJ -->
                             <div class="lpj-cover">
-                                <div class="lpj-title">LAPORAN PERTANGGUNGJAWABAN (LPJ)<br>PENGELOLAAN KEUANGAN & ASET</div>
+                                <div class="lpj-title">LAPORAN PERTANGGUNGJAWABAN (LPJ)<br>PENGELOLAAN KEUANGAN & KINERJA</div>
                                 <div class="lpj-subtitle" style="font-size: 14pt; margin-top: 15px; font-weight: normal;" id="teks-cover-periode">PERIODE: TAHUN 2026</div>
                                 <img id="lpj-logo-bumdes" src="1001578681.jpg" alt="Logo BUMDes">
                                 <div class="lpj-title" id="teks-cover-nama">BUMDES KARANG MAKMUR</div>
                                 <div class="lpj-subtitle" style="font-size: 12pt; margin-top: 10px; font-weight: normal;">
                                     DESA KARANGDOWO, KECAMATAN WELERI, KABUPATEN KENDAL<br>
-                                    Jl. Cempaka No.2 Karangdowo-Weleri Kode Pos 51355
+                                    Sekretariat: Jl. Cempaka No.2 Karangdowo-Weleri Kode Pos 51355
                                 </div>
                             </div>
 
                             <div class="html2pdf__page-break"></div>
 
-                            <!-- ISI LPJ -->
+                            <!-- 2. LEMBAR PENGESAHAN -->
+                            <div class="lpj-content" style="min-height: 280mm; display: flex; flex-direction: column; justify-content: center;">
+                                <h3>LEMBAR PENGESAHAN</h3>
+                                <p style="text-align: center; margin-bottom: 40px;">Laporan Pertanggungjawaban (LPJ) Pengurus <span class="lbl-nama-bumdes fw-bold"></span> periode <span id="teks-isi-periode" class="fw-bold"></span> ini telah diperiksa, dievaluasi, dan disahkan pada tanggal <span id="lpj-tgl-cetak-pengesahan">.............</span>.</p>
+                                
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 50px; text-align: center; font-size: 12pt;">
+                                    <div style="width: 45%;">
+                                        <p style="font-weight: bold; margin-bottom: 80px;">Ketua Pengawas / BPD</p>
+                                        <p style="text-decoration: underline; font-weight: bold;">..........................................</p>
+                                    </div>
+                                    <div style="width: 45%;">
+                                        <p style="font-weight: bold; margin-bottom: 80px;">Direktur BUMDes</p>
+                                        <p style="text-decoration: underline; font-weight: bold;" id="lpj-ttd-direktur-pengesahan">..........................................</p>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; font-size: 12pt;">
+                                    <p>Mengetahui dan Menyetujui,</p>
+                                    <p style="font-weight: bold; margin-bottom: 80px;">Kepala Desa selaku Penasihat</p>
+                                    <p style="text-decoration: underline; font-weight: bold;" id="lpj-ttd-kades-pengesahan">..........................................</p>
+                                </div>
+                            </div>
+
+                            <div class="html2pdf__page-break"></div>
+
+                            <!-- 3. KATA PENGANTAR & BAB I -->
                             <div class="lpj-content">
                                 <h3>KATA PENGANTAR</h3>
-                                <p>Puji syukur kehadirat Tuhan Yang Maha Esa atas rahmat dan karunia-Nya sehingga Laporan Pertanggungjawaban (LPJ) Keuangan <span class="lbl-nama-bumdes fw-bold"></span> periode <span id="teks-isi-periode" class="fw-bold"></span> dapat diselesaikan dengan baik.</p>
-                                <p>Laporan ini disusun sebagai bentuk transparansi dan akuntabilitas pengurus BUMDes kepada Pemerintah Desa, BPD, dan masyarakat. LPJ ini menyajikan rincian pendapatan, beban operasional, posisi kas, serta daftar inventaris aset.</p>
-                                <p>Kami menyadari sepenuhnya bahwa dalam pengelolaan ini masih terdapat kekurangan. Oleh karena itu, kritik dan saran yang membangun sangat kami harapkan demi perbaikan di masa mendatang.</p>
-
-                                <h3>BAB I<br>PENDAHULUAN</h3>
+                                <p>Puji syukur kehadirat Tuhan Yang Maha Esa atas limpahan rahmat, taufik, dan hidayah-Nya, sehingga Laporan Pertanggungjawaban (LPJ) Pengelolaan Keuangan dan Kinerja <span class="lbl-nama-bumdes fw-bold"></span> ini dapat diselesaikan.</p>
+                                <p>Laporan ini disusun sebagai bentuk perwujudan prinsip tata kelola perusahaan yang baik (Good Corporate Governance) yang menekankan pada asas transparansi, akuntabilitas, tanggung jawab, independensi, dan kewajaran. Kami menyadari bahwa dalam pelaksanaan tugas dan pengelolaan usaha masih banyak tantangan. Namun, berkat sinergi dari Pemerintah Desa, BPD, dan masyarakat, BUMDes dapat terus beroperasi dan berkembang.</p>
+                                
+                                <h3 style="margin-top: 40px;">BAB I<br>PENDAHULUAN</h3>
                                 <h4>1.1 Latar Belakang</h4>
-                                <p>BUMDes didirikan sebagai pilar ekonomi desa yang bertujuan untuk meningkatkan Pendapatan Asli Desa (PADes), mengembangkan potensi ekonomi lokal, dan membuka lapangan kerja bagi masyarakat. Pengelolaan keuangan yang tertib merupakan syarat mutlak agar BUMDes dapat berkembang secara berkelanjutan.</p>
-                                <h4>1.2 Maksud dan Tujuan</h4>
-                                <p>Penyusunan LPJ ini bertujuan untuk:</p>
+                                <p>Badan Usaha Milik Desa (BUMDes) merupakan pilar kesejahteraan bangsa yang dikelola secara mandiri oleh desa. BUMDes bertujuan untuk mengoptimalkan aset desa, memajukan perekonomian desa, dan meningkatkan Pendapatan Asli Desa (PADes) demi kesejahteraan masyarakat desa.</p>
+                                <h4>1.2 Dasar Hukum</h4>
                                 <ul>
-                                    <li>Melaporkan secara rinci dan transparan seluruh arus kas (pemasukan dan pengeluaran).</li>
-                                    <li>Menyajikan posisi keuangan BUMDes pada periode yang dilaporkan.</li>
-                                    <li>Memenuhi kewajiban administratif pengurus sesuai peraturan Perundang-undangan dan Peraturan Desa (Perdes).</li>
+                                    <li>Undang-Undang Nomor 6 Tahun 2014 tentang Desa.</li>
+                                    <li>Peraturan Pemerintah Nomor 11 Tahun 2021 tentang Badan Usaha Milik Desa.</li>
+                                    <li>Peraturan Desa (Perdes) setempat tentang pembentukan dan kepengurusan BUMDes.</li>
                                 </ul>
+                                <h4>1.3 Maksud dan Tujuan</h4>
+                                <p>Penyampaian LPJ ini bermaksud untuk memberikan gambaran komprehensif mengenai realisasi keuangan, kinerja unit usaha, aset inventaris, serta distribusi laba pada akhir periode pembukuan.</p>
+                            </div>
 
-                                <div class="html2pdf__page-break"></div>
+                            <div class="html2pdf__page-break"></div>
 
-                                <h3>BAB II<br>LAPORAN REALISASI KEUANGAN</h3>
-                                <p>Berikut adalah ringkasan realisasi pendapatan dan beban operasional (Laba/Rugi) BUMDes pada periode yang dilaporkan:</p>
+                            <!-- 4. BAB II & BAB III (KEUANGAN INTI) -->
+                            <div class="lpj-content">
+                                <h3>BAB II<br>LAPORAN KINERJA ORGANISASI</h3>
+                                <p>Selama periode pelaporan ini, BUMDes telah menjalankan roda organisasi melalui berbagai unit usaha. Seluruh pencatatan transaksi telah dilakukan menggunakan sistem digital secara <i>real-time</i> untuk meminimalisasi kesalahan (<i>human error</i>) dan meningkatkan keakuratan data.</p>
+                                
+                                <h3>BAB III<br>LAPORAN REALISASI KEUANGAN</h3>
+                                <h4>3.1 Laporan Laba Rugi</h4>
+                                <p>Berikut adalah rincian total akumulasi pendapatan kotor yang dikurangi dengan beban operasional dan beban penyusutan aset untuk mendapatkan nilai Laba Bersih (Sisa Hasil Usaha):</p>
                                 
                                 <table class="lpj-table">
                                     <thead>
                                         <tr>
                                             <th style="width: 5%;">No</th>
-                                            <th style="width: 55%;">Uraian Keuangan</th>
+                                            <th style="width: 55%;">Uraian Rekening Akun</th>
                                             <th style="width: 40%;">Nominal (Rp)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr><td colspan="3" style="background: #f8fafc; font-weight: bold;">A. PENDAPATAN</td></tr>
                                         <tr><td class="text-center">1</td><td>Pendapatan Operasional Unit Usaha</td><td class="text-end" id="lpj-pendapatan-op">0</td></tr>
-                                        <tr><td class="text-center">2</td><td>Pendapatan Non-Operasional</td><td class="text-end" id="lpj-pendapatan-non">0</td></tr>
-                                        <tr><td colspan="2" class="text-end fw-bold">TOTAL PENDAPATAN</td><td class="text-end fw-bold" id="lpj-total-pendapatan">0</td></tr>
+                                        <tr><td class="text-center">2</td><td>Pendapatan Non-Operasional / Lain-lain</td><td class="text-end" id="lpj-pendapatan-non">0</td></tr>
+                                        <tr><td colspan="2" class="text-end fw-bold">TOTAL PENDAPATAN BRUTO</td><td class="text-end fw-bold" id="lpj-total-pendapatan">0</td></tr>
                                         
                                         <tr><td colspan="3" style="background: #f8fafc; font-weight: bold;">B. BEBAN & PENGELUARAN</td></tr>
-                                        <tr><td class="text-center">1</td><td>Beban Operasional & Administrasi</td><td class="text-end text-danger" id="lpj-beban-op">0</td></tr>
-                                        <tr><td class="text-center">2</td><td>Beban Non-Operasional</td><td class="text-end text-danger" id="lpj-beban-non">0</td></tr>
+                                        <tr><td class="text-center">1</td><td>Beban Operasional, Admin, & Penyusutan</td><td class="text-end text-danger" id="lpj-beban-op">0</td></tr>
+                                        <tr><td class="text-center">2</td><td>Beban Non-Operasional / Lain-lain</td><td class="text-end text-danger" id="lpj-beban-non">0</td></tr>
                                         <tr><td colspan="2" class="text-end fw-bold">TOTAL BEBAN</td><td class="text-end fw-bold text-danger" id="lpj-total-beban">0</td></tr>
                                         
-                                        <tr style="background: #e2e8f0;"><td colspan="2" class="text-center fw-bold">SISA HASIL USAHA (LABA BERSIH PERIODE INI)</td><td class="text-end fw-bold" id="lpj-laba-bersih">0</td></tr>
+                                        <tr style="background: #e2e8f0;"><td colspan="2" class="text-center fw-bold">SISA HASIL USAHA (LABA BERSIH)</td><td class="text-end fw-bold" id="lpj-laba-bersih">0</td></tr>
                                     </tbody>
                                 </table>
 
-                                <h3>BAB III<br>POSISI SALDO & ASET</h3>
-                                <p>Posisi saldo Kas & Bank, serta daftar aset tetap inventaris BUMDes per akhir periode pelaporan adalah sebagai berikut:</p>
-                                
+                                <h4>3.2 Posisi Saldo Kas & Aset (Neraca Ringkas)</h4>
+                                <p>Posisi kemampuan likuiditas dan nilai kekayaan (aset) BUMDes per akhir periode pelaporan adalah sebagai berikut:</p>
                                 <table class="lpj-table">
                                     <thead>
-                                        <tr><th style="width: 70%;">Keterangan</th><th style="width: 30%;">Nominal (Rp)</th></tr>
+                                        <tr><th style="width: 70%;">Komponen Aktiva</th><th style="width: 30%;">Nominal (Rp)</th></tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td>Total Saldo Kas & Bank Akhir</td><td class="text-end fw-bold" id="lpj-saldo-kas">0</td></tr>
-                                        <tr><td>Total Nilai Sisa Aset Tetap (Inventaris)</td><td class="text-end fw-bold" id="lpj-nilai-aset">0</td></tr>
+                                        <tr><td>Saldo Kas & Bank (Tersedia)</td><td class="text-end fw-bold text-success" id="lpj-saldo-kas">0</td></tr>
+                                        <tr><td>Total Nilai Sisa Buku Aset Tetap (Inventaris)</td><td class="text-end fw-bold" id="lpj-nilai-aset">0</td></tr>
                                     </tbody>
                                 </table>
+                            </div>
 
-                                <h3>BAB IV<br>PENUTUP</h3>
-                                <p>Demikian Laporan Pertanggungjawaban (LPJ) Keuangan ini dibuat dengan sebenarnya berdasarkan bukti-bukti transaksi yang sah. Semoga dapat menjadi bahan evaluasi dan kebijakan strategis BUMDes di masa mendatang.</p>
+                            <div class="html2pdf__page-break"></div>
+
+                            <!-- 5. BAB IV & BAB V (PENUTUP) -->
+                            <div class="lpj-content">
+                                <h3>BAB IV<br>EVALUASI DAN RENCANA TINDAK LANJUT</h3>
+                                <h4>4.1 Permasalahan & Kendala</h4>
+                                <p>Dalam pelaksanaannya, BUMDes menghadapi beberapa dinamika di lapangan. Kendala utama umumnya terletak pada proses penguatan kapasitas SDM pengelola, persaingan pasar lokal, serta perlunya perluasan jaringan pemasaran untuk produk/jasa dari unit usaha.</p>
+                                <h4>4.2 Rencana Tindak Lanjut</h4>
+                                <p>Untuk mengatasi kendala tersebut, pengurus BUMDes merencanakan langkah strategis di periode mendatang, antara lain: meningkatkan inovasi produk, memperkuat penggunaan teknologi informasi (Sistem ERP) untuk efisiensi bisnis, dan mendorong keterlibatan warga secara lebih aktif.</p>
                                 
-                                <div class="lpj-ttd-area">
+                                <h3 style="margin-top: 40px;">BAB V<br>PENUTUP</h3>
+                                <p>Demikian Laporan Pertanggungjawaban (LPJ) ini dibuat dengan sebenar-benarnya dan didukung oleh bukti pencatatan transaksi yang sah. Kami selaku pengurus memohon maaf atas segala kekurangan selama masa bakti periode ini.</p>
+                                <p>Semoga di periode mendatang, BUMDes dapat memberikan manfaat yang jauh lebih besar lagi bagi kemajuan Desa dan peningkatan kesejahteraan seluruh warga masyarakat.</p>
+
+                                <div class="lpj-ttd-area" style="margin-top: 60px;">
                                     <div style="width: 40%;">
-                                        <p>Mengetahui/Menyetujui,</p>
+                                        <p>Mengetahui,</p>
                                         <p style="font-weight: bold;">Kepala Desa / Penasihat</p>
                                         <br><br><br>
-                                        <p style="text-decoration: underline; font-weight: bold;" id="lpj-ttd-kades">..........................................</p>
+                                        <p style="text-decoration: underline; font-weight: bold;" id="lpj-ttd-kades-penutup">..........................................</p>
                                     </div>
                                     <div style="width: 40%;">
-                                        <p>Karangdowo, <span id="lpj-tgl-cetak"></span></p>
-                                        <p style="font-weight: bold;">Direktur BUMDes</p>
+                                        <p>Ditetapkan di: Karangdowo<br>Pada Tanggal: <span id="lpj-tgl-cetak-penutup"></span></p>
+                                        <p style="font-weight: bold; margin-top: 5px;">Direktur BUMDes</p>
                                         <br><br><br>
-                                        <p style="text-decoration: underline; font-weight: bold;" id="lpj-ttd-direktur">..........................................</p>
+                                        <p style="text-decoration: underline; font-weight: bold;" id="lpj-ttd-direktur-penutup">..........................................</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
                 <div id="tab-log-aktivitas" class="konten-tab" style="display: none;">
                     <div class="card-report p-4">
