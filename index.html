@@ -3804,7 +3804,13 @@
             document.getElementById('lpj-ttd-direktur').innerText = profilBUMDes.direktur || 'Direktur BUMDes';
             document.getElementById('lpj-logo-bumdes').src = profilBUMDes.foto || '1001578681.jpg';
             document.getElementById('lpj-tgl-cetak').innerText = formatTanggalIndo(new Date().toISOString().slice(0, 10));
-
+            let tglCetak = formatTanggalIndo(new Date().toISOString().slice(0, 10));
+            document.getElementById('lpj-tgl-cetak-pengesahan').innerText = tglCetak;
+            document.getElementById('lpj-tgl-cetak-penutup').innerText = tglCetak;
+            document.getElementById('lpj-ttd-direktur-pengesahan').innerText = profilBUMDes.direktur || 'Direktur BUMDes';
+            document.getElementById('lpj-ttd-kades-pengesahan').innerText = profilBUMDes.penasihat || 'Kepala Desa';
+            document.getElementById('lpj-ttd-direktur-penutup').innerText = profilBUMDes.direktur || 'Direktur BUMDes';
+            document.getElementById('lpj-ttd-kades-penutup').innerText = profilBUMDes.penasihat || 'Kepala Desa';
             // Perhitungan Laba Rugi berdasarkan waktu filter
             let p_op = 0, p_non = 0, b_op = 0, b_non = 0;
             riwayatJurnal.forEach(item => {
