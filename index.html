@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+
+    <title>SIAK BUMDes - High-End Enterprise Financial ERP</title>
+
+    
+
+    <!-- PWA Requirements -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- PERBAIKAN: tampilan profesional saat diinstall di HP (Android & iOS) -->
+
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="apple-mobile-web-app-title" content="SIAK BUMDes">
+
+    <link rel="icon" href="logo-icon-192.png">
+
+    <link rel="apple-touch-icon" href="logo-icon-192.png">
+
+
+
+    <!-- Bootstrap 5 CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome untuk Ikon -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    
+
+    <!-- Eksternal CSS (File yang baru saja kita buat) -->
+
+    <link rel="stylesheet" href="style.css">
+
+
+
+    <!-- Library Eksternal (Chart, Alert, PDF, Excel) -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+
+    <!-- FIREBASE SDK (COMPAT MODULES) -->
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+
+    <!-- PENAMBAHAN FIREBASE AUTH UNTUK KEAMANAN -->
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <!-- PENAMBAHAN FIREBASE STORAGE UNTUK UPLOAD BERKAS BUMDES (AD/ART/SK/DLL) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+
+</head>
+
+<body>
+
+
+
+    <!-- ================= MODUL LOGIN MULTI-AKUN (MEGAH) ================= -->
+
+    <div id="halaman-login" class="bg-serat-dark">
+
+        <div class="card-login text-center">
+
+            <div class="login-logo-container mx-auto">
+
+                <img id="login-logo-img" src="logo.png" class="login-logo-animated" alt="Logo BUMDes">
+
+            </div>
+
+            
+
+            <h4 class="fw-extrabold text-dark mb-1" id="login-nama-bumdes">BUMDES KARANG MAKMUR</h4>
+
+            <p class="text-muted small mb-1">Enterprise BUMDes Management System</p>
+
+            <div class="mb-4"><span class="badge bg-success bg-opacity-10 text-success border px-3 py-1.5 rounded-pill shadow-sm"><i class="fas fa-shield-halved me-1"></i> Secured by Firebase Auth</span></div>
+
+
+
+            <form action="javascript:void(0);" onsubmit="prosesLogin(event)" class="text-start">
+
+                <div class="mb-3">
+
+                    <label class="form-label small fw-bold text-dark">Username Akses</label>
+
+                    <input type="text" class="form-control py-2 border-secondary-subtle bg-light" id="login-username" placeholder="Masukkan username admin / unit" autocomplete="username" required>
+
+                </div>
+
+                
+
+                <div class="mb-3">
+
+                    <label class="form-label small fw-bold text-dark">Kata Sandi (Password)</label>
+
+                    <div class="input-group">
+
+                        <input type="password" class="form-control py-2 border-end-0 border-secondary-subtle bg-light" id="login-password" placeholder="Masukkan password" autocomplete="current-password" required>
+
+                        <span class="input-group-text input-group-text-toggle border-start-0 border-secondary-subtle bg-light" onclick="togglePassword('login-password', 'toggle-icon-login')">
+
+                            <i class="fas fa-eye text-muted" id="toggle-icon-login"></i>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div class="text-end mb-4">
+
+                    <a href="javascript:void(0);" onclick="mintaResetPasswordWA()" class="text-decoration-none small fw-bold" style="color: var(--accent-teal);">
+
+                        <i class="fab fa-whatsapp me-1"></i>Lupa Kredensial?
+
+                    </a>
+
+                </div>
+
+
+
+                <button type="submit" class="btn text-white w-100 fw-bold py-3 rounded-3 shadow-lg" style="background: linear-gradient(135deg, var(--accent-teal), #047857); font-size: 1.05rem;">
+
+                    <i class="fas fa-right-to-bracket me-2"></i> Otentikasi & Masuk
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= DASHBOARD UTAMA BUMDES ================= -->
+
+    <div class="wrapper" id="dashboard-aplikasi" style="display: none;">
+
+        
+
+        <!-- SIDEBAR MENU -->
+
+        <nav id="sidebar" class="no-print bg-serat-dark">
+
+            <div class="sidebar-header">
+
+                <div class="d-flex align-items-center justify-content-between">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="brand-badge text-white rounded-3 p-2 me-3 d-flex align-items-center justify-content-center shadow" style="width: 44px; height: 42px;">
+
+                            <i class="fas fa-building-columns fa-lg"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h6 class="fw-extrabold mb-0 text-white" style="letter-spacing: 0.5px;">BUMDES ERP</h6>
+
+                            <small class="text-warning fw-bold" id="sidebar-nama-bumdes" style="font-size: 0.68rem; letter-spacing: 1px;">KARANG MAKMUR</small>
+
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-sm text-white d-lg-none" onclick="toggleSidebar()"><i class="fas fa-xmark fa-xl"></i></button>
+
+                </div>
+
+            </div>
+
+
+
+            <ul class="sidebar-menu pb-5">
+
+                <!-- Modul Inti -->
+
+                <li class="menu-header">Modul Utama</li>
+
+                <li><button class="active btn-nav-ringkasan" onclick="bukaTab('tab-ringkasan', this)"><i class="fas fa-chart-pie me-2"></i> Ringkasan Utama</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-unit-usaha" onclick="bukaTab('tab-unit-usaha', this)"><i class="fas fa-store me-2 text-warning"></i> Unit Usaha & Hak Akses</button></li>
+
+                <li><button class="text-success-light btn-nav-input" onclick="bukaTab('tab-input', this)"><i class="fas fa-circle-plus me-2 text-success"></i> Input Transaksi</button></li>
+
+                <li><button class="btn-nav-jurnal" onclick="bukaTab('tab-jurnal', this)"><i class="fas fa-book me-2"></i> Jurnal Umum</button></li>
+                <li><button class="btn-nav-dokumen-legal" onclick="bukaTab('tab-dokumen-legal', this)"><i class="fas fa-folder-open me-2 text-warning"></i> Dokumen Legal BUMDes</button></li>
+
+
+
+                <!-- Akuntansi Dasar -->
+
+                <li class="menu-header menu-admin-only">Akuntansi Dasar</li>
+
+                <li class="menu-admin-only"><button class="btn-nav-bukubesar" onclick="bukaTab('tab-bukubesar', this)"><i class="fas fa-book-open me-2"></i> Buku Besar</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-neraca-saldo" onclick="bukaTab('tab-neraca-saldo', this)"><i class="fas fa-list-check me-2"></i> Neraca Saldo</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-aset" onclick="bukaTab('tab-aset', this)"><i class="fas fa-couch me-2"></i> Inventaris & Aset</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-modal-pades" onclick="bukaTab('tab-modal-pades', this)"><i class="fas fa-hand-holding-dollar me-2"></i> Modal Desa & PADes</button></li>
+
+
+
+                <!-- Laporan & Evaluasi -->
+
+                <li class="menu-header menu-admin-only">Pelaporan & Audit</li>
+
+                <li class="menu-admin-only"><button class="btn-nav-labarugi" onclick="bukaTab('tab-labarugi', this)"><i class="fas fa-chart-line me-2"></i> Laporan Laba Rugi</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-neraca" onclick="bukaTab('tab-neraca', this)"><i class="fas fa-scale-balanced me-2"></i> Posisi Keuangan (Neraca)</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-aruskas" onclick="bukaTab('tab-aruskas', this)"><i class="fas fa-water me-2"></i> Laporan Arus Kas</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-calk" onclick="bukaTab('tab-calk', this)"><i class="fas fa-file-contract me-2"></i> Catatan Laporan (CaLK)</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-rasio" onclick="bukaTab('tab-rasio', this)"><i class="fas fa-chart-diagram me-2"></i> Analisis Rasio Finansial</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-audit-tahunan" onclick="bukaTab('tab-audit-tahunan', this)"><i class="fas fa-box-archive me-2"></i> Tutup Buku Tahunan</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-lpj" onclick="bukaTab('tab-lpj', this)"><i class="fas fa-file-pdf me-2" style="color: #ef4444;"></i> Cetak LPJ Lengkap</button></li>
+
+
+
+                <!-- Pengaturan & Log -->
+
+                <li class="menu-header menu-admin-only">Pengaturan & Log</li>
+
+                <li class="menu-admin-only"><button class="btn-nav-log-aktivitas" onclick="bukaTab('tab-log-aktivitas', this)"><i class="fas fa-shield-halved me-2"></i> Log Aktivitas System</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-profil-bumdes" onclick="bukaTab('tab-profil-bumdes', this)"><i class="fas fa-id-card-clip me-2 text-warning"></i> Profil Kepengurusan</button></li>
+
+                <li class="menu-admin-only"><button class="btn-nav-pengaturan" onclick="bukaTab('tab-pengaturan', this)"><i class="fas fa-gears me-2"></i> Backup & Database</button></li>
+
+            </ul>
+
+        </nav>
+
+
+
+        <!-- KONTEN UTAMA -->
+
+        <div id="content">
+
+            <div class="topbar d-flex justify-content-between align-items-center no-print">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <button class="btn btn-outline-dark btn-sm d-lg-none" onclick="toggleSidebar()"><i class="fas fa-bars fa-lg"></i></button>
+
+                    <div>
+
+                        <h5 class="fw-extrabold mb-0 text-dark" id="judul-halaman">Dashboard Ringkasan</h5>
+
+                        <small class="text-muted d-none d-sm-block" style="font-size: 0.75rem;">Sistem Informasi Akuntansi BUMDes Transparan & Akuntabel</small>
+
+                    </div>
+
+                </div>
+
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+
+                    <div class="firebase-status-dot-container me-1" id="firebase-indicator-wrapper" title="Menghubungkan ke Server Firebase..."><span class="firebase-status-dot" id="firebase-status-lamp"></span></div>
+
+                    <button class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold shadow-sm d-none d-sm-inline-block" onclick="window.print()"><i class="fas fa-print me-1"></i> Cetak</button>
+
+                    <button class="btn btn-danger btn-sm rounded-pill px-3 fw-bold shadow-sm" onclick="prosesLogout()"><i class="fas fa-power-off me-1"></i> Logout</button>
+
+                    <div class="vr d-none d-sm-block"></div>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <img id="topbar-user-photo" src="logo.png" class="avatar-frame" alt="Foto Profil">
+
+                        <div class="d-none d-md-block">
+
+                            <div class="fw-bold lh-1" style="font-size: 0.82rem;" id="user-display-name">Pengurus BUMDes</div>
+
+                            <small class="text-success fw-bold" style="font-size: 0.68rem;" id="user-display-role"><i class="fas fa-circle fa-2xs me-1"></i>Online</small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="page-container">
+
+                <!-- KOP SURAT CETAK -->
+
+                <div class="kop-cetak-resmi">
+
+                    <img id="kop-logo-img" src="logo.png" alt="Logo BUMDes" style="width: 100px; height: 100px; object-fit: contain;">
+
+                    <div class="kop-text-container">
+
+                        <h4 class="lbl-nama-bumdes">BADAN USAHA MILIK DESA KARANG MAKMUR</h4>
+
+                        <h5>DESA KARANGDOWO KECAMATAN WELERI KABUPATEN KENDAL</h5>
+
+                        <p>Sekretariat: Jl. Cempaka No.2 Karangdowo-Weleri Kode Pos 51355</p>
+
+                    </div>
+
+                </div>
+
+                
+
+                <!-- ================= TAB ORIGINAL (RINGKASAN S/D PENGATURAN) ================= -->
+
+                
+
+                <div id="tab-ringkasan" class="konten-tab">
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-6 col-xl-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size: 0.72rem;">SALDO KAS & BANK</span><h4 class="fw-extrabold text-dark m-0" id="dash-kas-bank">Rp 0</h4></div></div>
+
+                        <div class="col-6 col-xl-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size: 0.72rem;">LABA BERSIH (YTD)</span><h4 class="fw-extrabold text-success m-0" id="dash-laba-bersih">Rp 0</h4></div></div>
+
+                        <div class="col-6 col-xl-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size: 0.72rem;">PIUTANG USAHA</span><h4 class="fw-extrabold text-warning m-0" id="dash-piutang">Rp 0</h4></div></div>
+
+                        <div class="col-6 col-xl-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size: 0.72rem;">HUTANG USAHA</span><h4 class="fw-extrabold text-danger m-0" id="dash-hutang">Rp 0</h4></div></div>
+
+                    </div>
+
+                    <div class="card-stat bg-serat-card">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <h6 class="fw-bold text-dark m-0"><i class="fas fa-chart-column me-2" style="color: var(--accent-teal);"></i>Tren Pendapatan vs Beban Operasional</h6>
+
+                            <span class="badge bg-success bg-opacity-10 text-success border px-3 py-1.5 rounded-pill fw-bold" id="status-kesehatan-finansial">Status: Sehat</span>
+
+                        </div>
+
+                        <div style="height: 310px;"><canvas id="grafikKeuangan"></canvas></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="tab-unit-usaha" class="konten-tab" style="display: none;">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div><h5 class="fw-bold text-dark mb-1">Daftar Unit Usaha & Hak Akses</h5><p class="text-muted small m-0">Kelola informasi unit usaha aktif dan pengaturan akses akun per unit.</p></div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-success fw-bold px-3 rounded-pill shadow-sm" onclick="bukaModalTambahUnit()"><i class="fas fa-plus me-1"></i> Tambah Unit Usaha</button>
+                            <button class="btn btn-sm btn-outline-primary fw-bold px-3 rounded-pill shadow-sm" onclick="bukaModalTambahAkunUnit()"><i class="fas fa-user-plus me-1"></i> Buat Akun Akses</button>
+                        </div>
+
+                    </div>
+
+                    <div class="row g-3 mb-4" id="container-unit-usaha"></div>
+
+                    <div class="card-report p-4 mt-4">
+
+                        <h6 class="fw-extrabold text-dark mb-3">Tabel Hak Akses Akun Unit</h6>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-laporan align-middle">
+
+                                <thead><tr><th>Unit Usaha</th><th>Pengelola / Username</th><th>Izin Input Laporan</th><th>Status Akses</th><th class="text-center" style="width: 150px;">Aksi</th></tr></thead>
+
+                                <tbody id="tabel-akses-unit"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="tab-input" class="konten-tab" style="display: none;">
+
+                    <div class="row justify-content-center">
+
+                        <div class="col-md-8 col-lg-6">
+
+                            <div class="card-stat bg-serat-card">
+
+                                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-circle-plus me-2" style="color: var(--accent-teal);"></i>Tambah Transaksi Keuangan</h5>
+
+                                <form id="form-transaksi" onsubmit="tambahTransaksi(event)">
+
+                                    <div class="mb-3"><label class="form-label fw-bold small">Pilih Unit Usaha</label><select class="form-select" id="input-unit-usaha" required></select></div>
+
+                                    <div class="mb-3"><label class="form-label fw-bold small">Tanggal Transaksi</label><input type="date" class="form-control" id="input-tanggal" required></div>
+
+                                    <div class="mb-3">
+
+                                        <label class="form-label fw-bold small">Kategori Akun Transaksi</label>
+
+                                        <select class="form-select" id="input-kategori" required onchange="ubahTampilanKeterangan()">
+
+                                            <option value="nilai-pendapatan">1. Pendapatan Operasional Unit Usaha</option>
+
+                                            <option value="nilai-pendapatan-non">2. Pendapatan Non-Operasional / Lain-Lain</option>
+
+                                            <option value="nilai-beban">3. Beban Operasional & Administrasi Umum</option>
+
+                                            <option value="nilai-beban-non">4. Beban Non-Operasional / Lain-Lain</option>
+
+                                            <option value="nilai-piutang">5. Piutang Usaha (Penambahan)</option>
+
+                                            <option value="nilai-hutang">6. Hutang Usaha (Penambahan)</option>
+
+                                            <option value="nilai-kas-lalu">7. Penambahan Kas Tahun Sebelumnya (Saldo Awal)</option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label class="form-label fw-bold small">Keterangan Transaksi</label>
+
+                                        <div id="container-keterangan"><input type="text" class="form-control" id="input-keterangan" placeholder="Contoh: Pembayaran Paket Internet Warga" autocomplete="off" required></div>
+
+                                        <input type="text" class="form-control mt-2" id="input-keterangan-manual" placeholder="Ketik keterangan manual di sini..." autocomplete="off" style="display:none;">
+
+                                    </div>
+
+                                    <div class="mb-4"><label class="form-label fw-bold small">Nominal (Rp)</label><input type="text" class="form-control input-rupiah" id="input-nominal" placeholder="Contoh: 1.500.000" required></div>
+
+                                    <button type="submit" class="btn btn-success w-100 fw-bold py-2.5 shadow-lg"><i class="fas fa-save me-1"></i> Simpan Transaksi (Cloud Firebase)</button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="tab-jurnal" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4">
+
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom gap-3">
+
+                            <div><h5 class="fw-extrabold text-dark m-0">Jurnal Umum Transaksi</h5><small class="text-muted">Catatan riwayat seluruh transaksi (Real-time Cloud)</small></div>
+
+                            <div class="d-flex align-items-center gap-2 no-print">
+
+                                <select class="form-select form-select-sm menu-admin-only shadow-sm filter-laporan-unit" id="filter-unit-jurnal" style="border-color: var(--accent-teal);" onchange="filterJurnalTanggal()"><option value="Semua">-- Semua Unit --</option></select>
+
+                                <input type="date" class="form-control form-control-sm" id="filter-tgl-mulai" onchange="filterJurnalTanggal()">
+
+                                <span class="small fw-bold">s/d</span>
+
+                                <input type="date" class="form-control form-control-sm" id="filter-tgl-selesai" onchange="filterJurnalTanggal()">
+
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-2" onclick="resetFilterTanggal()" title="Reset Filter"><i class="fas fa-rotate-left"></i></button>
+
+                            </div>
+
+                            <div class="d-flex gap-2">
+
+                                <button class="btn btn-sm btn-outline-success fw-bold rounded-pill px-3 shadow-sm" onclick="eksporJurnalKeCSV()"><i class="fas fa-file-excel me-1"></i> Unduh CSV</button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-laporan align-middle">
+
+                                <thead><tr><th>Tanggal</th><th>Unit Usaha</th><th>Keterangan Transaksi</th><th>No. Akun</th><th>Nama Akun</th><th class="text-end">Debit (Pemasukan)</th><th class="text-end">Kredit (Pengeluaran)</th><th class="text-center no-print" style="width: 110px;">Aksi</th></tr></thead>
+
+                                <tbody id="tabel-jurnal-umum"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- (TABS AKUNTANSI ASLI SEPERTI BUKU BESAR, NERACA SALDO, LABA RUGI, DLL... Untuk menghemat ruang, fungsi HTML dasar dipertahankan sama persis) -->
+
+                <div id="tab-bukubesar" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+
+                            <div><h5 class="fw-extrabold text-dark m-0">Buku Besar Akun (General Ledger)</h5></div>
+
+                            <div class="d-flex gap-2">
+
+                                <select class="form-select form-select-sm fw-bold shadow-sm filter-laporan-unit" id="filter-unit-bukubesar" onchange="renderBukuBesar()"><option value="Semua">-- Semua Unit --</option></select>
+
+                                <select class="form-select form-select-sm fw-bold shadow-sm" id="filter-akun-bukubesar" onchange="renderBukuBesar()">
+
+                                    <option value="Semua">-- Semua Kategori Akun --</option>
+
+                                    <option value="Pendapatan Operasional">Pendapatan Operasional</option>
+
+                                    <option value="Pendapatan Non-Operasional">Pendapatan Non-Operasional</option>
+
+                                    <option value="Beban Operasional">Beban Operasional & Admin</option>
+
+                                    <option value="Beban Non-Operasional">Beban Non-Operasional</option>
+
+                                    <option value="Piutang Usaha">Piutang Usaha</option>
+
+                                    <option value="Hutang Usaha">Hutang Usaha</option>
+
+                                    <option value="Kas Tahun Sebelumnya">Kas Tahun Sebelumnya</option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr><th>Tanggal</th><th>Unit Usaha</th><th>Keterangan</th><th>No. Akun</th><th>Nama Akun</th><th class="text-end">Debit</th><th class="text-end">Kredit</th><th class="text-end bg-teal text-white">Saldo Akhir</th></tr></thead><tbody id="tabel-buku-besar"></tbody></table></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div id="tab-neraca-saldo" class="konten-tab" style="display: none;"><div class="card-report p-4"><div class="text-center mb-4 pb-3 border-bottom"><h5 class="fw-bold m-0" style="color: var(--accent-teal);">NERACA SALDO (TRIAL BALANCE)</h5></div><div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr class="text-center"><th>Kode / Kategori Akun</th><th class="text-end">Debit (Rp)</th><th class="text-end">Kredit (Rp)</th></tr></thead><tbody id="tabel-neraca-saldo"></tbody></table></div></div></div>
+
+
+
+                <div id="tab-aset" class="konten-tab" style="display: none;"><div class="card-report p-4"><div class="d-flex justify-content-between mb-4 pb-3 border-bottom"><div><h5 class="fw-extrabold m-0">Inventaris & Aset Tetap</h5></div><button class="btn btn-sm btn-primary fw-bold rounded-pill" onclick="bukaModalTambahAset()"><i class="fas fa-plus"></i> Tambah Aset</button></div><div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr><th>Nama Aset</th><th>Unit Usaha</th><th>Tahun</th><th class="text-end">Harga Beli</th><th class="text-end">Masa Manfaat</th><th class="text-end">Susut/Tahun</th><th class="text-end">Nilai Sisa</th></tr></thead><tbody id="tabel-aset-tetap"></tbody></table></div></div></div>
+
+
+
+                <div id="tab-modal-pades" class="konten-tab" style="display: none;"><div class="row g-4"><div class="col-md-5"><div class="card-stat bg-serat-card mb-4"><h6 class="fw-bold mb-3">Total Modal Desa</h6><h3 class="fw-extrabold text-primary" id="val-total-modal-desa">Rp 0</h3></div><div class="card-report p-4"><div class="d-flex justify-content-between mb-3"><h6 class="fw-bold m-0">Simulasi PADes</h6><button class="btn btn-sm btn-outline-dark fw-bold rounded-pill" onclick="bukaModalEditPADes()">Edit Alokasi</button></div><ul class="list-group list-group-flush small fw-bold" id="list-simulasi-pades"></ul></div></div><div class="col-md-7"><div class="card-report p-4"><div class="d-flex justify-content-between mb-3"><h6 class="fw-bold m-0">Histori Modal Desa</h6><button class="btn btn-sm btn-outline-primary fw-bold rounded-pill" onclick="bukaModalTambahModal()">Setor Modal</button></div><div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr><th>Tahun</th><th>Sumber</th><th>Keterangan</th><th class="text-end">Nominal (Rp)</th></tr></thead><tbody id="tabel-histori-modal"></tbody></table></div></div></div></div></div>
+
+
+
+                <div id="tab-labarugi" class="konten-tab" style="display: none;"><div class="card-report p-4"><div class="text-center mb-4 pb-3 border-bottom"><h5 class="fw-bold m-0" style="color: var(--accent-teal);">LAPORAN LABA RUGI</h5></div><div class="table-responsive"><table class="table table-bordered table-laporan align-middle" id="tabel-laba-rugi"><tbody><tr class="baris-kategori"><td colspan="2">1. PENDAPATAN</td></tr><tr><td>Pendapatan Operasional</td><td class="text-end text-success fw-bold" id="total-pendapatan-op">0</td></tr><tr><td>Pendapatan Non-Operasional</td><td class="text-end text-success fw-bold" id="total-pendapatan-non">0</td></tr><tr class="fw-bold bg-light"><td>TOTAL PENDAPATAN</td><td class="text-end text-success" id="total-pendapatan">0</td></tr><tr class="baris-kategori"><td colspan="2">2. BEBAN OPERASIONAL</td></tr><tr><td>Beban Operasional & Penyusutan</td><td class="text-end text-danger fw-bold" id="total-beban-op">0</td></tr><tr><td>Beban Non-Operasional</td><td class="text-end text-danger fw-bold" id="total-beban-non">0</td></tr><tr class="fw-bold bg-light"><td>TOTAL BEBAN</td><td class="text-end text-danger" id="total-beban">0</td></tr><tr class="baris-total fs-6"><td class="fw-bold text-teal">LABA BERSIH</td><td class="text-end fw-bold text-teal" id="laba-bersih">0</td></tr></tbody></table></div></div></div>
+
+
+
+                <div id="tab-neraca" class="konten-tab" style="display: none;"><div class="card-report p-4"><div class="text-center mb-4 pb-3 border-bottom"><h5 class="fw-bold m-0" style="color: var(--accent-teal);">NERACA POSISI KEUANGAN</h5></div><div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr class="text-center"><th colspan="2" class="text-white bg-dark">ASET / AKTIVA</th><th colspan="2" class="text-white bg-secondary">KEWAJIBAN & MODAL / PASIVA</th></tr></thead><tbody><tr class="baris-kategori"><td colspan="2">Aset Lancar</td><td colspan="2">Kewajiban</td></tr><tr><td>Kas & Bank</td><td class="text-end nilai-aset" id="neraca-kas-bank">0</td><td>Hutang Usaha</td><td class="text-end nilai-pasiva" id="neraca-hutang-usaha">0</td></tr><tr><td>Piutang Usaha</td><td class="text-end nilai-aset" id="neraca-piutang-usaha">0</td><td class="baris-kategori" colspan="2">Ekuitas</td></tr><tr class="baris-kategori"><td colspan="2">Aset Tetap</td><td>Modal Disetor</td><td class="text-end nilai-pasiva" id="neraca-modal-disetor">0</td></tr><tr><td>Peralatan & Inventaris</td><td class="text-end nilai-aset" id="neraca-aset-tetap">0</td><td>Laba Berjalan</td><td class="text-end nilai-pasiva" id="neraca-laba-berjalan">0</td></tr><tr class="baris-total fs-6"><td class="text-teal">TOTAL ASET</td><td class="text-end text-teal" id="total-aset">0</td><td class="text-teal">TOTAL PASIVA</td><td class="text-end text-teal" id="total-pasiva">0</td></tr></tbody></table></div></div></div>
+
+
+
+                <!-- ================= LAPORAN ARUS KAS ================= -->
+
+                <div id="tab-aruskas" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4">
+
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom gap-2">
+
+                            <div class="text-center mb-0 flex-grow-1"><h5 class="fw-bold m-0" style="color: var(--accent-teal);">LAPORAN ARUS KAS</h5><small class="text-muted">Metode Langsung (Direct Method)</small></div>
+
+                            <select class="form-select form-select-sm fw-bold shadow-sm filter-laporan-unit no-print" id="filter-unit-aruskas" style="max-width:220px;" onchange="renderArusKas()"><option value="Semua">-- Semua Unit --</option></select>
+
+                        </div>
+
+                        <div class="table-responsive"><table class="table table-bordered table-laporan align-middle">
+
+                            <tbody>
+
+                                <tr class="baris-kategori"><td colspan="2">A. ARUS KAS DARI AKTIVITAS OPERASIONAL</td></tr>
+
+                                <tr><td>Penerimaan Kas dari Pendapatan Usaha</td><td class="text-end text-success fw-bold" id="ak-op-masuk">Rp 0</td></tr>
+
+                                <tr><td>Pembayaran Kas untuk Beban Operasional</td><td class="text-end text-danger fw-bold" id="ak-op-keluar">(Rp 0)</td></tr>
+
+                                <tr class="fw-bold bg-light"><td>Arus Kas Bersih dari Aktivitas Operasional</td><td class="text-end" id="ak-op-bersih">Rp 0</td></tr>
+
+                                <tr class="baris-kategori"><td colspan="2">B. ARUS KAS DARI AKTIVITAS INVESTASI</td></tr>
+
+                                <tr class="fw-bold bg-light"><td>Pembelian Aset Tetap / Inventaris</td><td class="text-end text-danger fw-bold" id="ak-investasi">(Rp 0)</td></tr>
+
+                                <tr class="baris-kategori"><td colspan="2">C. ARUS KAS DARI AKTIVITAS PENDANAAN</td></tr>
+
+                                <tr class="fw-bold bg-light"><td>Penyertaan Modal Desa & Pendanaan Lain</td><td class="text-end text-success fw-bold" id="ak-pendanaan">Rp 0</td></tr>
+
+                                <tr class="fw-bold" style="background:#e2e8f0;"><td>Kenaikan (Penurunan) Kas Bersih (A+B+C)</td><td class="text-end" id="ak-kenaikan-bersih">Rp 0</td></tr>
+
+                                <tr><td>Saldo Kas Awal Periode</td><td class="text-end fw-bold" id="ak-saldo-awal">Rp 0</td></tr>
+
+                                <tr class="baris-total fs-6"><td class="text-teal">SALDO KAS AKHIR PERIODE</td><td class="text-end text-teal" id="ak-saldo-akhir">Rp 0</td></tr>
+
+                            </tbody>
+
+                        </table></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= CATATAN ATAS LAPORAN KEUANGAN (CaLK) ================= -->
+
+                <div id="tab-calk" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4">
+
+                        <h5 class="fw-extrabold text-dark border-bottom pb-3 mb-4"><i class="fas fa-file-contract me-2 text-secondary"></i>Catatan Atas Laporan Keuangan (CaLK)</h5>
+
+                        <div class="row g-4">
+
+                            <div class="col-lg-5">
+
+                                <h6 class="fw-bold small text-uppercase text-muted mb-2">Ringkasan Otomatis (dari data sistem)</h6>
+
+                                <div class="p-3 bg-light rounded-3 border small" id="calk-ringkasan-otomatis" style="line-height:1.9;"></div>
+
+                            </div>
+
+                            <div class="col-lg-7">
+
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                                    <h6 class="fw-bold small text-uppercase text-muted m-0">Kebijakan Akuntansi & Catatan Penjelasan</h6>
+
+                                    <button class="btn btn-sm btn-success fw-bold rounded-pill px-3 no-print" onclick="simpanCalk()"><i class="fas fa-save me-1"></i> Simpan Catatan</button>
+
+                                </div>
+
+                                <textarea class="form-control" id="calk-textarea" rows="12" oninput="this.dataset.dirty='1'" placeholder="Contoh: 1. Laporan keuangan disusun menggunakan basis kas (cash basis). 2. Penyusutan aset tetap dihitung menggunakan metode garis lurus. 3. Tidak terdapat kejadian penting setelah tanggal laporan yang mempengaruhi posisi keuangan BUMDes...">Laporan keuangan BUMDes ini disusun berdasarkan basis kas (cash basis) dan mencerminkan seluruh transaksi yang tercatat pada sistem SIAK BUMDes selama periode berjalan. Penyusutan aset tetap dihitung dengan metode garis lurus sesuai masa manfaat masing-masing aset. Tidak terdapat kejadian material setelah tanggal laporan yang perlu diungkapkan.</textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= ANALISIS RASIO FINANSIAL ================= -->
+
+                <div id="tab-rasio" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4">
+
+                        <h5 class="fw-extrabold text-dark border-bottom pb-3 mb-4"><i class="fas fa-chart-diagram me-2 text-info"></i>Analisis Rasio Finansial</h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-6 col-lg-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size:0.7rem;">MARGIN LABA BERSIH</span><h4 class="fw-extrabold text-dark m-0" id="rasio-margin">0%</h4><small class="text-muted" style="font-size:0.68rem;">Laba Bersih / Total Pendapatan</small></div></div>
+
+                            <div class="col-6 col-lg-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size:0.7rem;">RASIO EFISIENSI BEBAN</span><h4 class="fw-extrabold text-dark m-0" id="rasio-efisiensi">0%</h4><small class="text-muted" style="font-size:0.68rem;">Total Beban / Total Pendapatan</small></div></div>
+
+                            <div class="col-6 col-lg-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size:0.7rem;">RASIO LIKUIDITAS KAS</span><h4 class="fw-extrabold text-dark m-0" id="rasio-kas">0x</h4><small class="text-muted" style="font-size:0.68rem;">Saldo Kas / Rata-rata Beban Bulanan</small></div></div>
+
+                            <div class="col-6 col-lg-3"><div class="card-stat bg-serat-card"><span class="text-muted fw-bold d-block mb-1" style="font-size:0.7rem;">KONTRIBUSI ASET</span><h4 class="fw-extrabold text-dark m-0" id="rasio-pertumbuhan-aset">0%</h4><small class="text-muted" style="font-size:0.68rem;">Nilai Aset Tetap / Total Aset</small></div></div>
+
+                        </div>
+
+                        <div class="alert alert-light border mt-4 mb-0 small" id="rasio-kesimpulan"><i class="fas fa-circle-info me-2 text-info"></i>Menunggu data transaksi untuk menghitung kesimpulan otomatis...</div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= TUTUP BUKU TAHUNAN ================= -->
+
+                <div id="tab-audit-tahunan" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4 mb-4">
+
+                        <h5 class="fw-extrabold text-dark border-bottom pb-3 mb-4"><i class="fas fa-box-archive me-2 text-warning"></i>Tutup Buku Tahunan</h5>
+
+                        <div class="alert alert-warning border-0 shadow-sm"><i class="fas fa-triangle-exclamation me-2"></i>Proses ini akan mengunci laporan tahun berjalan dan memindahkan saldo akhir kas menjadi <strong>Saldo Awal</strong> tahun berikutnya. Tindakan ini hanya boleh dilakukan pada akhir periode setelah seluruh transaksi diperiksa.</div>
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-6 col-md-3"><div class="p-3 bg-light rounded-3 border text-center"><small class="text-muted d-block fw-bold" style="font-size:0.68rem;">TAHUN BERJALAN</small><h5 class="fw-bold m-0" id="tutup-tahun-berjalan">-</h5></div></div>
+
+                            <div class="col-6 col-md-3"><div class="p-3 bg-light rounded-3 border text-center"><small class="text-muted d-block fw-bold" style="font-size:0.68rem;">TOTAL PENDAPATAN</small><h5 class="fw-bold m-0 text-success" id="tutup-total-pendapatan">Rp 0</h5></div></div>
+
+                            <div class="col-6 col-md-3"><div class="p-3 bg-light rounded-3 border text-center"><small class="text-muted d-block fw-bold" style="font-size:0.68rem;">TOTAL BEBAN</small><h5 class="fw-bold m-0 text-danger" id="tutup-total-beban">Rp 0</h5></div></div>
+
+                            <div class="col-6 col-md-3"><div class="p-3 bg-light rounded-3 border text-center"><small class="text-muted d-block fw-bold" style="font-size:0.68rem;">SALDO KAS AKHIR</small><h5 class="fw-bold m-0 text-teal" id="tutup-saldo-akhir">Rp 0</h5></div></div>
+
+                        </div>
+
+                        <button class="btn btn-danger fw-bold px-4 py-2 shadow-sm no-print" onclick="prosesTutupBukuTahunan()"><i class="fas fa-lock me-2"></i>Tutup Buku & Mulai Tahun Baru</button>
+
+                    </div>
+
+                    <div class="card-report p-4">
+
+                        <h6 class="fw-extrabold text-dark border-bottom pb-3 mb-3">Riwayat Tutup Buku</h6>
+
+                        <div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr><th>Tahun Ditutup</th><th class="text-end">Total Pendapatan</th><th class="text-end">Total Beban</th><th class="text-end">Saldo Dibawa ke Tahun Berikutnya</th><th>Waktu Proses</th></tr></thead><tbody id="tabel-histori-tutup-buku"><tr><td colspan="5" class="text-center text-muted py-4">Belum ada riwayat tutup buku.</td></tr></tbody></table></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- (TAB BAWAAN SEPERTI PENGATURAN, LOG, PROFIL ASLI DIPERTAHANKAN) -->
+
+                <!-- Note: As per request, structure is kept intact, handled by JS later. -->
+
+                <div id="tab-profil-bumdes" class="konten-tab" style="display: none;">
+
+                    <div class="row g-4">
+
+                        <div class="col-lg-5">
+
+                            <div class="card-report p-4">
+
+                                <h6 class="fw-extrabold text-dark border-bottom pb-3 mb-3"><i class="fas fa-id-card-clip me-2 text-warning"></i>Edit Profil BUMDes</h6>
+
+                                <form onsubmit="simpanProfilBUMDes(event)">
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Nama BUMDes</label><input type="text" class="form-control form-control-sm" id="pf-nama" required></div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Dasar Hukum / No. SK Perdes</label><input type="text" class="form-control form-control-sm" id="pf-sk" required></div>
+
+                                    <div class="row g-2 mb-2">
+
+                                        <div class="col-6"><label class="form-label small fw-bold">Periode Awal</label><input type="text" class="form-control form-control-sm" id="pf-jabatan-awal" required></div>
+
+                                        <div class="col-6"><label class="form-label small fw-bold">Periode Akhir</label><input type="text" class="form-control form-control-sm" id="pf-jabatan-akhir" required></div>
+
+                                    </div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Penasihat</label><input type="text" class="form-control form-control-sm" id="pf-penasihat" required></div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Pengawas</label><input type="text" class="form-control form-control-sm" id="pf-pengawas" required></div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Direktur</label><input type="text" class="form-control form-control-sm" id="pf-direktur" required></div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Sekretaris</label><input type="text" class="form-control form-control-sm" id="pf-sekretaris" required></div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">Bendahara</label><input type="text" class="form-control form-control-sm" id="pf-bendahara" required></div>
+
+                                    <div class="mb-2"><label class="form-label small fw-bold">No. WhatsApp Admin (untuk reset kredensial)</label><input type="text" class="form-control form-control-sm" id="pf-kontak-wa" placeholder="Contoh: 6281234567890"></div>
+
+                                    <div class="mb-3"><label class="form-label small fw-bold">Kode PIN Akses Menu Terkunci</label><input type="text" class="form-control form-control-sm" id="pf-kode-akses" maxlength="8" required></div>
+
+                                    <button type="submit" class="btn text-white w-100 fw-bold py-2 shadow-sm" style="background: var(--accent-teal);"><i class="fas fa-save me-1"></i> Simpan Profil</button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-7">
+
+                            <div class="card-report p-4">
+
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 border-bottom pb-3 mb-3">
+                                    <h6 class="fw-extrabold text-dark m-0"><i class="fas fa-sitemap me-2 text-primary"></i>Bagan Struktur Kepengurusan</h6>
+                                    <button type="button" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3 shadow-sm no-print" onclick="bukaModalTambahAnggota()"><i class="fas fa-user-plus me-1"></i> Tambah Anggota</button>
+                                </div>
+                                <p class="text-muted small mb-3"><i class="fas fa-circle-info me-1"></i>Struktur inti (Penasihat, Pengawas, Direktur, Sekretaris, Bendahara) diatur lewat form di sebelah kiri. Anggota/karyawan tambahan bisa ditambah, diedit, atau dihapus langsung dari bagan (arahkan kursor / sentuh kartu untuk melihat tombol aksi).</p>
+                                <div class="org-chart-frame">
+                                    <div class="tree" id="org-chart-container"></div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ================= DOKUMEN LEGAL BUMDES (AD/ART/SK/DLL) ================= -->
+                <div id="tab-dokumen-legal" class="konten-tab" style="display: none;">
+                    <div class="row g-4">
+                        <div class="col-lg-4 menu-admin-only" id="card-upload-dokumen">
+                            <div class="card-report p-4">
+                                <h6 class="fw-extrabold text-dark border-bottom pb-3 mb-3"><i class="fas fa-cloud-arrow-up me-2 text-success"></i>Unggah Berkas BUMDes</h6>
+                                <form onsubmit="uploadDokumenBUMDes(event)">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Kategori Dokumen</label>
+                                        <select class="form-select" id="dok-kategori" required>
+                                            <option value="AD">Anggaran Dasar (AD)</option>
+                                            <option value="ART">Anggaran Rumah Tangga (ART)</option>
+                                            <option value="SK">Surat Keputusan (SK)</option>
+                                            <option value="Perdes">Peraturan Desa (Perdes)</option>
+                                            <option value="NPWP">NPWP / Legalitas Usaha</option>
+                                            <option value="Lainnya">Dokumen Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Judul / Keterangan Berkas</label>
+                                        <input type="text" class="form-control" id="dok-judul" placeholder="Contoh: AD BUMDes Karang Makmur Tahun 2021" autocomplete="off" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Pilih File (PDF/Word/Gambar, Maks 5MB)</label>
+                                        <input type="file" class="form-control" id="dok-file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow-sm" id="btn-upload-dokumen"><i class="fas fa-upload me-1"></i> Unggah Berkas</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="card-report p-4">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
+                                    <h6 class="fw-extrabold text-dark m-0"><i class="fas fa-folder-open me-2 text-warning"></i>Arsip Berkas BUMDes</h6>
+                                    <select class="form-select form-select-sm" style="width:auto;" id="filter-kategori-dokumen" onchange="renderDokumenLegal()">
+                                        <option value="Semua">-- Semua Kategori --</option>
+                                        <option value="AD">AD</option>
+                                        <option value="ART">ART</option>
+                                        <option value="SK">SK</option>
+                                        <option value="Perdes">Perdes</option>
+                                        <option value="NPWP">NPWP / Legalitas</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                                <div id="container-dokumen-legal" class="row g-3">
+                                    <div class="col-12 text-center text-muted py-5">Memuat berkas...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-log-aktivitas" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4">
+
+                        <h5 class="fw-extrabold text-dark border-bottom pb-3 mb-4"><i class="fas fa-shield-halved me-2 text-secondary"></i>Log Aktivitas Sistem (Audit Trail)</h5>
+
+                        <div class="table-responsive"><table class="table table-bordered table-laporan align-middle"><thead><tr><th style="width:150px;">Waktu</th><th>Pengguna</th><th>Kategori</th><th>Detail Aktivitas</th></tr></thead><tbody id="tabel-log-aktivitas"><tr><td colspan="4" class="text-center text-muted py-4">Memuat riwayat aktivitas...</td></tr></tbody></table></div>
+
+                    </div>
+
+                </div>
+
+                <div id="tab-pengaturan" class="konten-tab" style="display: none;">
+
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+
+                            <div class="card-report p-4 h-100">
+
+                                <h6 class="fw-extrabold text-dark border-bottom pb-3 mb-3"><i class="fas fa-file-export me-2 text-success"></i>Backup Database</h6>
+
+                                <p class="text-muted small">Unduh seluruh data (Jurnal, Unit Usaha, Aset, Modal Desa, Profil) ke dalam satu file Excel (.xlsx) sebagai cadangan.</p>
+
+                                <button class="btn btn-success fw-bold w-100 py-2 shadow-sm" onclick="backupDatabaseExcel()"><i class="fas fa-download me-2"></i>Unduh Backup Excel</button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="card-report p-4 h-100">
+
+                                <h6 class="fw-extrabold text-dark border-bottom pb-3 mb-3"><i class="fas fa-file-import me-2 text-danger"></i>Restore Database</h6>
+
+                                <p class="text-muted small">Pulihkan data dari file backup Excel (.xlsx). <strong class="text-danger">Data yang sudah tersimpan di cloud tidak akan dihapus</strong>, data hasil restore akan ditambahkan.</p>
+
+                                <input type="file" class="form-control mb-3" id="input-file-restore" accept=".xlsx,.xls">
+
+                                <button class="btn btn-outline-danger fw-bold w-100 py-2" onclick="restoreDatabaseExcel()"><i class="fas fa-upload me-2"></i>Pulihkan dari File</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                
+
+                <!-- TAB LPJ ORIGINAL (Penting untuk PDF) -->
+
+                <div id="tab-lpj" class="konten-tab" style="display: none;">
+
+                    <div class="card-report p-4 mb-4 no-print">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+
+                            <div><h5 class="fw-extrabold text-dark m-0"><i class="fas fa-file-pdf text-danger me-2"></i>Generator LPJ Formal</h5></div>
+
+                            <button class="btn btn-danger fw-bold shadow-sm" onclick="cetakLPJPDF()"><i class="fas fa-print me-1"></i> Generate & Unduh LPJ</button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Template Cover LPJ (Struktur dipertahankan) -->
+
+                    <div class="lpj-preview-wrapper d-none d-md-flex no-print">
+
+                        <div id="lpj-print-area" class="lpj-page">
+
+                            <!-- Halaman 1 : Sampul -->
+
+                            <div class="lpj-cover">
+
+                                <img id="lpj-cover-logo" src="logo.png" alt="Logo">
+
+                                <div class="lpj-title">Laporan Pertanggungjawaban</div>
+
+                                <div class="lpj-subtitle" id="lpj-cover-nama">BUMDes</div>
+
+                                <p style="margin-top:25px; font-size:13pt;">Tahun Buku <span id="lpj-cover-tahun">2026</span></p>
+
+                                <p id="lpj-cover-alamat" style="margin-top:80px; font-size:11pt; max-width:340px;"></p>
+
+                            </div>
+
+
+
+                            <div class="html2pdf__page-break"></div>
+
+                            <div class="lpj-content">
+
+                                <h3>Kata Pengantar</h3>
+
+                                <p>Puji syukur kami panjatkan atas terselenggaranya seluruh kegiatan usaha BUMDes selama periode berjalan. Laporan Pertanggungjawaban (LPJ) ini disusun sebagai wujud transparansi dan akuntabilitas pengelolaan keuangan kepada Pemerintah Desa, Badan Permusyawaratan Desa, dan seluruh masyarakat.</p>
+
+                                <h4>Profil Kepengurusan</h4>
+
+                                <table class="lpj-table" id="lpj-tabel-pengurus"></table>
+
+                            </div>
+
+
+
+                            <div class="html2pdf__page-break"></div>
+
+                            <div class="lpj-content">
+
+                                <h3>Laporan Laba Rugi</h3>
+
+                                <table class="lpj-table" id="lpj-tabel-labarugi"></table>
+
+                            </div>
+
+
+
+                            <div class="html2pdf__page-break"></div>
+
+                            <div class="lpj-content">
+
+                                <h3>Posisi Keuangan (Neraca)</h3>
+
+                                <table class="lpj-table" id="lpj-tabel-neraca"></table>
+
+                            </div>
+
+
+
+                            <div class="html2pdf__page-break"></div>
+
+                            <div class="lpj-content">
+
+                                <h3>Laporan Arus Kas</h3>
+
+                                <table class="lpj-table" id="lpj-tabel-aruskas"></table>
+
+                            </div>
+
+
+
+                            <div class="html2pdf__page-break"></div>
+
+                            <div class="lpj-content">
+
+                                <h3>Daftar Inventaris & Aset Tetap</h3>
+
+                                <table class="lpj-table" id="lpj-tabel-aset"></table>
+
+                                <h3 style="margin-top:35px;">Penutup</h3>
+
+                                <p>Demikian Laporan Pertanggungjawaban ini kami susun dengan sebenar-benarnya sebagai bentuk transparansi dan akuntabilitas pengelolaan BUMDes kepada seluruh pemangku kepentingan.</p>
+
+                                <div class="lpj-ttd-area" id="lpj-ttd-area"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+
+
+            <footer class="mt-5 pt-3 pb-3 border-top text-center text-muted no-print" style="background: #ffffff;">
+
+                <small class="fw-bold" style="letter-spacing: 0.5px;">Copyright &copy; 2026 Muhamad Efendhi, S. Ak - SIAK BUMDes ERP Enterprise.</small>
+
+            </footer>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= MOBILE NAV ================= -->
+
+    <div class="mobile-bottom-nav no-print" id="mobile-nav-bar" style="display: none;">
+
+        <button class="active btn-nav-ringkasan" onclick="bukaTabMobile('tab-ringkasan', this)"><i class="fas fa-chart-pie"></i><span>Home</span></button>
+
+        <button class="btn-nav-unit-usaha menu-admin-only" onclick="bukaTabMobile('tab-unit-usaha', this)"><i class="fas fa-store"></i><span>Unit</span></button>
+
+        <button class="btn-nav-input" onclick="bukaTabMobile('tab-input', this)"><i class="fas fa-circle-plus text-success" style="font-size: 1.3rem;"></i><span>Input</span></button>
+
+        <button class="btn-nav-labarugi menu-admin-only" onclick="bukaTabMobile('tab-labarugi', this)"><i class="fas fa-chart-line"></i><span>Laporan</span></button>
+
+        <button class="btn-nav-profil-bumdes menu-admin-only" onclick="bukaTabMobile('tab-profil-bumdes', this)"><i class="fas fa-id-card"></i><span>Profil</span></button>
+
+    </div>
+
+
+
+    <!-- ================= MODAL GLOBAL (PIN AKSES, EDIT) ================= -->
+
+    <div class="modal fade" id="modalPinAkses" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+
+            <div class="modal-content border-0 shadow rounded-4 p-4 text-center">
+
+                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-lock text-primary mb-2"></i><br>Verifikasi PIN Akses</h5>
+
+                <input type="password" class="form-control google-pin-input mb-3" id="input-pin-akses" placeholder="Masukkan PIN" autocomplete="off">
+
+                <button type="button" class="btn btn-primary w-100 fw-bold" onclick="verifikasiPinAkses()">Selanjutnya</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- (Modal lain seperti Tambah Unit, Edit Jurnal, Edit PADes strukturnya di-generate di app.js nanti untuk menghemat baris HTML utama) -->
+
+
+
+    <!-- ================= SCRIPT UTAMA ================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+
+    <!-- MENGHUBUNGKAN KE LOGIKA APLIKASI KITA (Akan dibuat selanjutnya) -->
+
+    <script src="app.js"></script>
+
+    
+
+</body>
+
+</html>
+
